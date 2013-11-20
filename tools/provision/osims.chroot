@@ -1,0 +1,90 @@
+#!/bin/sh
+
+# Sat Dec 11 12:59:06 CST 2004
+# Symbiot Internal - osims.chroot
+#
+# This script is used to clone the latest opensims image to the "/opensims" directory.
+# It is expected that this directory be used to conduct a cvs checkout
+# of the latest code tree and operate tests from chroot environment.
+#
+# NOTE: Although similar, this script should NOT be confused with "imager.sh".
+#
+# Mike ERWIN <mikee@symbiot.com># 
+# Jamie PUGH <jamie@symbiot.com>
+#
+
+# first stop all services 
+echo "stopping services" ;
+/etc/init.d/tomcat5 stop ;
+/etc/init.d/snort stop ;
+
+# just in case tomcat doesn't die
+killall -9 java ;
+
+# make sure postgres is stopped
+echo "makin sure postgres is stopped..." ;
+/etc/init.d/postgresql stop ;
+/etc/init.d/postgresql zap ;
+sleep 5 ; 
+echo "sleeping ..." ;
+
+#copy firstboot into /etc/conf.d/local.start
+# @TODO until we have the provisioning network running... (PXN)
+#cp /etc/conf.d/local.start.first /etc/conf.d/local.start;
+
+#echo "dumping db content" ;
+#psql -Upostgres -d opensims -c " delete from rrd.bucket ; delete from alert ; delete from response ; delete from host ; vacuum analyze ;" ;
+
+echo "make imaging directory" ;
+umount /opensims/proc/ ;
+rm -rf /opensims ;
+mkdir /opensims ;
+mkdir /opensims/sys ; 
+mkdir /opensims/proc ;
+
+echo "copying image ....  may take awhile.." ;
+cp -rfpd /bin /opensims ;
+cp -rfpd /boot /opensims ;
+cp -rfpd /dev /opensims ;
+cp -rfpd /etc /opensims ;
+cp -rfpd /home /opensims ;
+cp -rfpd /lib /opensims ;
+cp -rfpd /mnt /opensims ;
+cp -rfpd /opt /opensims ;
+cp -rfpd /root /opensims ;
+cp -rfpd /sbin /opensims ;
+cp -rfpd /tmp /opensims ;
+cp -rfpd /usr /opensims ;
+cp -rfpd /var /opensims ;
+
+# remove root contents & bash_history
+echo "deletin lotsa crap and zeroin out logfiles... ";
+rm -rf /opensims/root/* ;
+rm -f /opensims/root/.bash_history ;
+rm -rf /opensims/root/.ssh/* ;
+rm -f /opensims/root/.viminfo ;
+
+# remove symbiot contents & bash_history
+rm -rf /opensims/home/symbiot/* ;
+rm -f /opensims/home/symbiot/.bash_history ;
+rm -f /opensims/home/symbiot/.viminfo ;
+
+rm -rf /opensims/tmp/* ;
+
+echo "" > /opensims/var/log/tomcat5/catalina.out ;
+rm -rf /opensims/var/log/tomcat5/localhost_log.* ;
+echo "" > /opensims/var/log/messages ;
+echo "" > /opensims/var/log/lastlog ;
+echo "" > /opensims/var/log/wtmp ;
+rm -rf /opensims/var/log/*.?.gz ;
+echo "" > /opensims/var/log/snort/alert ; 
+rm -rf /opensims/var/log/snort/snort.log.* ;
+echo "" > /opensims/var/log/postgresql/pg_autovacuum ;
+echo "" > /opensims/var/log/postgresql/postgres ;
+
+rm -rf /opensims/usr/portage/distfiles/* ;
+
+mount -t proc proc /opensims/proc/ ;
+cp /etc/resolv.conf /opensims/etc ;
+cp /root/osims.sync /opensims/home/symbiot/;
+#cp /root/*.xml /opensims/home/symbiot/;

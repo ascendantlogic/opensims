@@ -1,0 +1,19 @@
+$CVSId: README,v 1.2 2004/07/10 23:27:46 paco Exp $
+$Id: README 1 2008-01-10 18:37:05Z smoot $
+OpenSIMS - network traffic modeling (tcpdump)
+
+Paco NATHAN <paco@symbiot.com>
+
+@LICENSE@
+
+######################################################################
+
+To model network traffic in the "172.16.1.0/24" address range, using
+the "eth1" network interface in promiscuous mode, try using:
+
+    sudo bash -c "./voyeur.pl -x -c '172.16.1.0/24' /usr/sbin/tcpdump eth1 > eth1.xml"
+
+Let that run for a few minutes (if there's plenty of network traffic),
+then press Control-C (to generate a SIGINT signal).  The output
+"eth1.xml" will be generated as an XML document representing a
+prototype network model.

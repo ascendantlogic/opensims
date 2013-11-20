@@ -1,0 +1,18 @@
+# $CVSId: postgresql,v 1.7 2004/08/17 15:42:04 paco Exp $
+# $Id$
+# database properties
+
+# JDBC updates: http://jdbc.postgresql.org/download.html
+# driver settings in the OpenSIMS properties will look something like:
+#
+#   db.jdbc.driver = org.postgresql.Driver
+#   db.jdbc.jar = /opt/postgresql-7.4.3/lib/pg74.215.jdbc3.jar
+
+databaseName = ${tdk.project}
+databaseSchema = ${tdk.project}
+
+createDatabaseUrl = jdbc:postgresql://localhost:5432/template1
+buildDatabaseUrl = jdbc:postgresql://localhost:5432/${tdk.project}
+databaseUrl = jdbc:postgresql://localhost:5432/${tdk.project}
+
+torque.database.validationQuery = SELECT 1

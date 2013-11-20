@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+$Id: rpt_navigate.xml 1 2008-01-10 18:37:05Z smoot $
+XML driver document for report navigation
+Paco NATHAN paco@symbiot.com
+ -->
+<NAVIGATE>
+	<MENU name="content_type" prompt="output:">
+		<OPTION value="html" default="true">
+			HTML
+		</OPTION>
+		<OPTION value="xml">
+			XML
+		</OPTION>
+		<OPTION value="csv">
+			CSV
+		</OPTION>
+	</MENU>
+	<MENU name="time_limit">
+		<OPTION value="1" default="true">
+			last hour
+		</OPTION>
+		<OPTION value="4">
+			last 4 hours
+		</OPTION>
+		<OPTION value="12">
+			last 12 hours
+		</OPTION>
+		<OPTION value="24">
+			last day
+		</OPTION>
+		<OPTION value="168">
+			last week
+		</OPTION>
+		<OPTION value="672">
+			last month
+		</OPTION>
+		<OPTION value="8064">
+			last year
+		</OPTION>
+	</MENU>
+	<MENU name="order_by" prompt="order by:">
+		<OPTION value="count" default="true" sql="ORDER BY order_count">
+			incident count
+		</OPTION>
+		<OPTION value="tick" sql="ORDER BY order_tick">
+			most recent
+		</OPTION>
+	</MENU>
+	<MENU name="order_dir">
+		<OPTION value="asc" sql="ASC">
+			ascending
+		</OPTION>
+		<OPTION value="desc" default="true" sql="DESC">
+			descending
+		</OPTION>
+	</MENU>
+	<MENU name="result_limit" prompt="show:">
+		<OPTION value="20" default="true" sql="LIMIT 20">
+			20
+		</OPTION>
+		<OPTION value="100" sql="LIMIT 100">
+			100
+		</OPTION>
+		<OPTION value="1000" sql="LIMIT 1000">
+			1000
+		</OPTION>
+		<OPTION value="all" sql="">
+			all
+		</OPTION>
+	</MENU>
+</NAVIGATE>

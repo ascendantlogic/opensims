@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+$Id: support_docs.xml 1 2008-01-10 18:37:05Z smoot $
+ -->
+
+<document>
+<properties>
+<title>Support: Documentation</title>
+<author
+ email="lsimon@symbiot.com"
+>Lindsey SIMON</author>
+</properties>
+
+<body>
+
+<section
+ name="Support: Documentation"
+>
+<ul>
+
+<li>
+<p>
+<a
+ href="http://opensims.org/docs/manual/"
+ target="manual"
+>Interactive Manual</a>
+</p>
+</li>
+
+<li>
+<p>
+<a
+ href="http://opensims.org/"
+ target="_blank"
+>OpenSIMS Project Home</a>
+</p>
+</li>
+
+<li>
+<p>
+<a
+ href="LICENSE"
+ target="_blank"
+>License</a>
+</p>
+</li>
+
+</ul>
+</section>
+
+</body>
+</document>

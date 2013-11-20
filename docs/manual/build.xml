@@ -1,0 +1,147 @@
+<project
+ name="manual"
+ default="docs"
+ basedir="."
+>
+
+<!--
+@LICENSE@
+
+Paco NATHAN paco@symbiot.com
+ -->
+
+<description>
+$CVSId: build.xml,v 1.4 2004/08/27 10:48:20 paco Exp $
+$Id: build.xml 1 2008-01-10 18:37:05Z smoot $
+
+OpenSIMS - build script for generating the manual from XML source
+
+</description>
+
+
+<!-- ######################################################################
+		global properties
+     ###################################################################### -->
+
+<property
+ name="build.dir"
+ location="${basedir}/../../build"
+/>
+<import
+ file="${build.dir}/properties.xml"
+/>
+
+<property
+ name="docs.manual.src"
+ location="${basedir}/xdocs"
+/>
+<property
+ name="docs.manual.dst"
+ location="${webapp.dir}/manual"
+/>
+<property
+ name="docs.manual.ext"
+ value=".html"
+/>
+<property
+ name="docs.manual.template.dir"
+ location="${docs.manual.src}/stylesheets"
+/>
+<property
+ name="docs.manual.project"
+ value="./stylesheets/project.xml"
+/>
+<property
+ name="docs.manual.template.style"
+ value="./xdocs/stylesheets/site.vsl"
+/>
+
+
+<!-- ######################################################################
+		classpath handling
+     ###################################################################### -->
+
+<path
+ id="classpath"
+>
+<fileset
+ dir="${velocity.home}/build/lib"
+>
+<include
+ name="**/*.jar"
+/>
+</fileset>
+
+<fileset
+ dir="${velocity.home}/bin"
+>
+<include
+ name="**/*.jar"
+/>
+</fileset>
+</path>
+
+
+<!-- ######################################################################
+		build tasks
+     ###################################################################### -->
+
+<target
+ name="prepare"
+>
+<available
+ classname="org.apache.velocity.anakia.AnakiaTask"
+ property="AnakiaTask.present"
+>
+<classpath
+ refid="classpath"
+/>
+</available>
+</target>
+
+
+<target
+ depends="prepare"
+ name="prepare-error"
+ unless="AnakiaTask.present"
+>
+<echo>
+
+AnakiaTask is not present!
+Please check to make 
+sure that velocity.jar 
+is in your classpath.
+
+</echo>
+</target>
+
+
+<target
+ name="docs"
+ depends="prepare-error"
+ if="AnakiaTask.present"
+>
+<taskdef
+ name="anakia"
+ classname="org.apache.velocity.anakia.AnakiaTask"
+>
+<classpath
+ refid="classpath"
+/>
+</taskdef>
+
+<anakia
+ basedir="${docs.manual.src}"
+ destdir="${docs.manual.dst}"
+ projectFile="${docs.manual.project}"
+ extension="${docs.manual.ext}"
+ templatePath="${docs.manual.template.dir}"
+ style="${docs.manual.template.style}"
+ excludes="**/stylesheets/**"
+ includes="**/*.xml"
+ lastModifiedCheck="false"
+>
+</anakia>
+</target>
+
+</project>

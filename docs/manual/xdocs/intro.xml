@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<properties>
+<title>Introduction</title>
+<author
+ email="paco@symbiot.com"
+>Paco NATHAN</author>
+</properties>
+
+<body>
+
+<section
+ name="Project OpenSIMS"
+>
+<p>
+
+Project OpenSIMS includes three main components:
+
+</p>
+
+<ul>
+<li>
+<i>OpenSIMS</i> - security infrastructure management system
+</li>
+<li>
+<i>AgentSDK</i> - software developers kit for security agents
+</li>
+<li>
+<i>Ceteri</i> - collaborative framework for risk metrics
+</li>
+</ul>
+
+<p>
+
+The essential concept is that most networking environments (such as
+for the web server from which you downloaded this text) have some kind
+of network security devices -- or at least some network equipment
+which provides security features: routers, switches, firewalls, IDS,
+anti-spam, anti-virus, web servers, mail servers, NAT, VPN,
+authentication, etc.
+
+If your equipment lives at a high-end NOC, it might be running under
+the watchful eye of something like <i>HP OpenView</i> or <i>IBM
+Tivoli</i> which can monitor many devices.
+
+If you've got big bucks to spend in your IT budget, you might have IPS
+devices running instead of firewalls, effectively coupling the
+firewall and IDS functions.
+
+</p>
+<p>
+
+Looking at the market stats, however, those scenarios are probably not
+your scenario.
+
+So why not get some application which can dynamically create
+<i>structural coupling</i> for the equipment that you do have?
+
+Right, that would be a 
+
+<a
+ href="./reference.html"
+>SIMS</a>.
+
+Here we present the code base for an open source SIMS.
+
+</p>
+<p>
+
+For more details, see our homepage:  
+
+<a
+ href="http://opensims.org/"
+>http://opensims.org/</a>
+
+</p>
+</section>
+
+<section
+ name="AgentSDK"
+>
+<p>
+
+The <i>AgentSDK</i> provides the "glue" used to link together all
+those different kinds of networking and security devices.
+
+Its plugin architecture allows highly extensible support for many
+different vendors.
+
+Running in the context of <i>Tomcat 5.x</i> or a comparable commercial
+servlet container, the agents provide an effective security model
+based on mutual authentication over TLS.
+
+The end results include support for:
+
+</p>
+<ul>
+<li>
+network autodiscovery
+</li>
+<li>
+log aggregation
+</li>
+<li>
+security alert correlation
+</li>
+<li>
+network behavioral modeling
+</li>
+<li>
+countermeasures
+</li>
+</ul>
+<p>
+
+</p>
+</section>
+
+<section
+ name="OpenSIMS Webapp"
+>
+<p>
+
+Most of the <i>OpenSIMS</i> web application is written in Java (and
+related XML tools), so it makes sense that the reference
+implementation be based on the <i>Tomcat</i> application server.
+
+The code is general enough to deploy on other servlet containers.
+
+It also includes a GUI based on Macromedia <i>Flash</i>.
+
+Flash is not open source, however the Flash players are readily
+available for most popular platforms via free downloads.
+
+</p>
+</section>
+
+<section
+ name="Ceteri - Repository Web Services API"
+>
+<p>
+
+The other main component, <i>Ceteri</i>, is a project aimed at
+producing a collaborative framework for exchanging <i>risk
+metrics</i>.
+
+This is based on using <i>Tomcat</i> and <i>Axis</i> for the platform
+reference implementation, with support for <i>Apache</i> through a
+module which wraps the <i>AgentSDK</i>.
+
+</p>
+<p>
+
+There are a few good analogies for the concept of collaborative risk
+metrics.
+
+One is the means by which financial firms analyze risk in foreign
+currency trading.
+
+Another is how credit card firms develop credit ratings and fraud
+profiles.
+
+Perhaps an even better analogy is found in how exterior routing
+protocols exchange metrics to adapt their routing topologies.
+
+</p>
+</section>
+
+</body>
+</document>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEPENDENCIES>
+	<GCC dependency='gcc' version='3.3.2' test='gcc -v' />
+	<OPENSSL dependency='openssl' version='0.9.7d' test='openssl version' />
+	<PERL dependency='perl' version='5.8.x' test='perl -v' />
+	<PERL_GETOPT dependency='Getopt::Std' test='./dep_test_getopt.pl' />
+	<PERL_HTMLENTITIES dependency='HTML::Entities' test='./dep_test_htmlentities.pl' />
+	<SNORT dependency='snort' version='2.0.4' test='snort -V' />
+	<NMAP dependency='nmap' version='3.50' test='nmap -v' />
+	<JAVA dependency='Java' version='1.4.2' test='java -version' />
+	<ANT dependency='Ant' version='1.6.1' test='ant -version' />
+	<TOMCAT dependency='Tomcat' version='5.x' test='' />
+</DEPENDENCIES>

@@ -1,0 +1,43 @@
+# DEBIAN SPECIFIC NOTES
+
+
+To install opensims on Debian, you'll need to be running testing (aka Sarge).
+
+
+DEPENDENCIES
+------------
+Below is a list of the debian package names you'll need to apt-get install.
+
+	ant
+	libgetopt-mixed-perl
+	libhtml-parser-perl
+	openssl
+	nmap
+	snort
+	zlib1g-dev
+	g++
+	make
+	libssl-dev
+	
+	mysql or postegresql (running as a daemon on a TCP/IP port)
+
+In addition, make sure to install j2sdk, and jakarta-tomcat binaries and have the appropriate java db driver.
+
+
+INSTALLATION NOTES
+------------------
+
+* MYSQL *
+
+Make sure to comment out skip-networking in /etc/mysql/my.cnf and restart the mysql daemon.
+
+
+
+* SNORT *
+
+In /etc/snort/snort.debian.conf you need to make sure the line below matches yours.
+
+DEBIAN_SNORT_OPTIONS="-y -I -N -A fast"
+
+
+

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<properties>
+<title>References</title>
+<author
+ email="paco@symbiot.com"
+>Paco NATHAN</author>
+</properties>
+
+<body>
+
+<section
+ name="Articles and Whitepapers"
+>
+<ul>
+
+<li>
+<p>
+<a
+ href="http://www.snort.org/docs/threatmanagement.pdf"
+ target="_blank"
+>Threat Management Systems</a>
+<br/>
+Steven J. Scott
+</p>
+</li>
+
+<li>
+<p>
+<a
+ href="http://www.symbiot.com/media/SIMS_Evolution.pdf"
+ target="_blank"
+>A Trajectory for the Evolution of SIMS Architecture</a>
+<br/>
+Paco X. Nathan, Mike W. Erwin, Jamie L. Pugh, William W. Hurley
+</p>
+</li>
+
+<li>
+<p>
+<a
+ href="http://www.onlamp.com/pub/a/security/2004/08/03/symbiot.html"
+ target="_blank"
+>What "Countermeasures" Really Means</a>
+<br/>
+Paco X. Nathan
+</p>
+</li>
+
+<li>
+<p>
+<a
+ href="http://www.ossim.net/whatis.php"
+ target="_blank"
+>OSSIM</a>
+
+<br/>
+Dominique Karg, 
+David Gil,
+Julio Casal,
+Fabio Ospitia,
+Alberto Roman,
+Stephane Fournie
+</p>
+</li>
+
+<li>
+<p>
+<a
+ href="http://www.loud-fat-bloke.co.uk/ids-iamdoh.html"
+ target="_blank"
+>I-AM-DOH</a>
+<br/>
+
+Mark "Fat Bloke" Osborne
+</p>
+</li>
+
+<li>
+<p>
+<a
+ href="http://www.linuxworld.com/story/45707.htm?DE=1"
+ target="_blank"
+>The Business Value of Open Source: Changing the rules of competition</a>
+
+<br/>
+Bill Claybrook
+</p>
+</li>
+
+</ul>
+</section>
+
+</body>
+</document>

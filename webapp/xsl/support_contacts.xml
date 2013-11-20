@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+$Id: support_contacts.xml 1 2008-01-10 18:37:05Z smoot $
+ -->
+
+<document>
+<properties>
+<title>Support: Contacts</title>
+<author
+ email="lsimon@symbiot.com"
+>Lindsey SIMON</author>
+</properties>
+
+<body>
+
+<section
+ name="Support: Contacts"
+>
+<ul>
+
+<li>
+<p>
+<a
+ href="mailto:info@opensims.org"
+>info@opensims.org</a>
+</p>
+</li>
+
+<li>
+<p>
+<a
+ href="mailto:bugs@opensims.org"
+>bugs@opensims.org</a>
+</p>
+</li>
+
+<li>
+<p>
+<a
+ href="mailto:features@opensims.org"
+>features@opensims.org</a>
+</p>
+</li>
+
+</ul>
+</section>
+
+</body>
+</document>

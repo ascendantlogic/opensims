@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<LINGO>
+
+<!--
+$Id: lingo.xml 1 2008-01-10 18:37:05Z smoot $
+OpenSIMS - language translation
+ -->
+
+<TERM
+ key="shutdown_reboot"
+ >
+<TEXT
+ lang="en"
+>Shutdown/Reboot</TEXT>
+</TERM>
+
+<TERM
+ key="agent_operation"
+>
+<!-- nav bar menu, report item -->
+<TEXT
+ lang="en"
+>Agent Operation</TEXT>
+<TEXT
+ lang="fr"
+>Disposition D'Agent</TEXT>
+</TERM>
+
+<TERM
+ key="orb"
+>
+<!-- nav bar menu, config item -->
+<TEXT
+ lang="en"
+>Orb</TEXT>
+<TEXT
+ lang="fr"
+>Orb</TEXT>
+</TERM>
+
+<TERM
+ key="config"
+>
+<!-- nav bar menu header -->
+<TEXT
+ lang="en"
+>Config</TEXT>
+<TEXT
+ lang="fr"
+>Config</TEXT>
+</TERM>
+
+<TERM
+ key="contacts"
+>
+<!-- nav bar menu, support item -->
+<TEXT
+ lang="en"
+>Contacts</TEXT>
+<TEXT
+ lang="fr"
+>Contacts</TEXT>
+</TERM>
+
+<TERM
+ key="diagnostics"
+>
+<!-- nav bar menu, support item -->
+<TEXT
+ lang="en"
+>Diagnostics</TEXT>
+<TEXT
+ lang="fr"
+>Diagnostic</TEXT>
+</TERM>
+
+<TERM
+ key="documentation"
+>
+<!-- nav bar menu, support item -->
+<TEXT
+ lang="en"
+>Documentation</TEXT>
+<TEXT
+ lang="fr"
+>Documentation</TEXT>
+</TERM>
+
+<TERM
+ key="firewall"
+>
+<!-- nav bar menu, config item -->
+<TEXT
+ lang="en"
+>Firewall</TEXT>
+<TEXT
+ lang="fr"
+>Firewall</TEXT>
+</TERM>
+
+<TERM
+ key="history"
+>
+<!-- nav bar menu, live item -->
+<TEXT
+ lang="en"
+>History</TEXT>
+<TEXT
+ lang="fr"
+>Histoire</TEXT>
+</TERM>
+
+<TERM
+ key="license"
+>
+<!-- nav bar menu, config item -->
+<TEXT
+ lang="en"
+>License</TEXT>
+<TEXT
+ lang="fr"
+>Licence</TEXT>
+</TERM>
+
+<TERM
+ key="live"
+>
+<!-- nav bar menu header -->
+<TEXT
+ lang="en"
+>Live</TEXT>
+<TEXT
+ lang="fr"
+>Vivant</TEXT>
+</TERM>
+
+<TERM
+ key="login"
+>
+<!-- nav bar menu, config item -->
+<TEXT
+ lang="en"
+>Login Access</TEXT>
+<TEXT
+ lang="fr"
+>Ouverture</TEXT>
+</TERM>
+
+<TERM
+ key="metrics"
+>
+<!-- nav bar menu, live item -->
+<TEXT
+ lang="en"
+>Metrics</TEXT>
+<TEXT
+ lang="fr"
+>M\u00E9trique</TEXT>
+</TERM>
+
+<TERM
+ key="network"
+>
+<!-- nav bar menu, live item -->
+<TEXT
+ lang="en"
+>Network</TEXT>
+<TEXT
+ lang="fr"
+>Réseau</TEXT>
+</TERM>
+
+<TERM
+ key="network_model"
+>
+<!-- nav bar menu, report item -->
+<TEXT
+ lang="en"
+>Network Model</TEXT>
+<TEXT
+ lang="fr"
+>Modèle De Réseau</TEXT>
+</TERM>
+
+<TERM
+ key="network_model_grid"
+>
+<!-- nav bar menu, config item -->
+<TEXT
+ lang="en"
+>Network Model</TEXT>
+<TEXT
+ lang="fr"
+>Modèle De Réseau</TEXT>
+</TERM>
+
+<TERM
+ key="notification"
+>
+<!-- nav bar menu, config item -->
+<TEXT
+ lang="en"
+>Notification</TEXT>
+<TEXT
+ lang="fr"
+>Notification</TEXT>
+</TERM>
+
+<TERM
+ key="registration"
+>
+<!-- nav bar menu, config menu -->
+<TEXT
+ lang="en"
+>Registration</TEXT>
+<TEXT
+ lang="fr"
+>Registration</TEXT>
+</TERM>
+
+<TERM
+ key="remediation"
+>
+<!-- nav bar menu, report menu -->
+<TEXT
+ lang="en"
+>Remediation</TEXT>
+<TEXT
+ lang="fr"
+>Remediation</TEXT>
+</TERM>
+
+<TERM
+ key="reports"
+>
+<!-- nav bar menu header -->
+<TEXT
+ lang="en"
+>Reports</TEXT>
+<TEXT
+ lang="fr"
+>Reportage</TEXT>
+</TERM>
+
+<TERM
+ key="services"
+>
+<!-- nav bar menu, config menu -->
+<TEXT
+ lang="en"
+>Services</TEXT>
+<TEXT
+ lang="fr"
+>Services</TEXT>
+</TERM>
+
+<TERM
+ key="status"
+>
+<!-- nav bar menu header -->
+<TEXT
+ lang="en"
+>Status</TEXT>
+<TEXT
+ lang="fr"
+>Statut</TEXT>
+</TERM>
+
+<TERM
+ key="support"
+>
+<!-- nav bar menu header -->
+<TEXT
+ lang="en"
+>Support</TEXT>
+<TEXT
+ lang="fr"
+>Support</TEXT>
+</TERM>
+
+<TERM
+ key="top_attackers"
+>
+<!-- nav bar menu, report item -->
+<TEXT
+ lang="en"
+>Top Attackers</TEXT>
+<TEXT
+ lang="fr"
+>Les Attaquants</TEXT>
+</TERM>
+
+<TERM
+ key="port_attackers"
+>
+<!-- nav bar menu, report item -->
+<TEXT
+ lang="en"
+>Port Attackers</TEXT>
+<TEXT
+ lang="fr"
+>Port Attaquants</TEXT>
+</TERM>
+
+<TERM
+ key="top_attacks"
+>
+<!-- nav bar menu, report item -->
+<TEXT
+ lang="en"
+>Top Attacks</TEXT>
+<TEXT
+ lang="fr"
+>Les Attaques</TEXT>
+</TERM>
+
+<TERM
+ key="top_countries"
+>
+<!-- nav bar menu, report item -->
+<TEXT
+ lang="en"
+>Top Countries</TEXT>
+<TEXT
+ lang="fr"
+>Les Payes</TEXT>
+</TERM>
+
+<TERM
+ key="selected_countries"
+>
+<!-- nav bar menu, report item -->
+<TEXT
+ lang="en"
+>Selected Countries</TEXT>
+<TEXT
+ lang="fr"
+>Les Payes du Choiser</TEXT>
+</TERM>
+
+<TERM
+ key="country"
+>
+<!-- nav bar menu, report item -->
+<TEXT
+ lang="en"
+>Country</TEXT>
+<TEXT
+ lang="fr"
+>Le Pays</TEXT>
+</TERM>
+
+<TERM
+ key="attacker"
+>
+<!-- nav bar menu, report item -->
+<TEXT
+ lang="en"
+>Attacker</TEXT>
+<TEXT
+ lang="fr"
+>Le Attaquant</TEXT>
+</TERM>
+
+
+<TERM
+ key="updates"
+>
+<!-- nav bar menu, config item -->
+<TEXT
+ lang="en"
+>Updates</TEXT>
+<TEXT
+ lang="fr"
+>Mises a Jour</TEXT>
+</TERM>
+
+</LINGO>

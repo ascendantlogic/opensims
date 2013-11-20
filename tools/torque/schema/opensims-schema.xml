@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE database SYSTEM "http://db.apache.org/torque/dtd/database_3_1.dtd">
+<!--
+ $Id: opensims-schema.xml 1 2008-01-10 18:37:05Z smoot $
+ OpenSIMS - Torque schema definitions
+
+ Paco NATHAN	paco@symbiot.com
+ Jim NASBY		jnasby@symbiot.com
+ Mike W. ERWIN	mikee@symbiot.com
+
+ @LICENSE@
+ -->
+<database name="opensims" defaultIdMethod="native">
+	<table name="alert" description="security alert instances">
+		<column name="id" type="INTEGER" description="ID gets automatically incremented" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="source" type="VARCHAR" description="source platform for the security event" size="20" required="true" />
+		<column name="alert_def_id" type="INTEGER" description="alert definition id" required="true" />
+		<column name="src_host_id" type="INTEGER" description="src host" required="true" />
+		<column name="src_port" type="VARCHAR" description="src port" size="6" required="true" default="0" />
+		<column name="dst_host_id" type="INTEGER" description="dst host" required="true" />
+		<column name="dst_port" type="VARCHAR" description="dst port" size="6" required="true" default="0" />
+		<column name="protocol" type="VARCHAR" description="network protocol for the security event" size="6" required="true" />
+		<column name="ce" type="DOUBLE" description="cost estimator" required="true" default="0.0" />
+		<column name="te" type="DOUBLE" description="threat estimator" required="true" default="0.0" />
+		<column name="ve" type="DOUBLE" description="vuln estimator" required="true" default="0.0" />
+		<column name="rm" type="DOUBLE" description="risk metric" required="true" default="0.0" />
+		<column name="ci" type="DOUBLE" description="confidence interval" required="true" default="0.0" />
+		<column name="created" type="TIMESTAMP" description="SQL timestamp when created" required="true" />
+		<column name="tick" type="BIGINT" description="Java millisecond Unix epoch timestamp for when last updated" required="true" default="0" />
+		<column name="incident_count" type="INTEGER" description="consecuitive identical alert counter" required="true" default="1" />
+		<foreign-key foreignTable="alert_def">
+			<reference local="alert_def_id" foreign="id" />
+		</foreign-key>
+		<foreign-key foreignTable="host">
+			<reference local="src_host_id" foreign="id" />
+		</foreign-key>
+		<foreign-key foreignTable="host">
+			<reference local="dst_host_id" foreign="id" />
+		</foreign-key>
+		<index name="alert_i_timeout">
+			<index-column name="tick" />
+		</index>
+<!--
+ needed as a fix for PostgreSQL v7.2 and later
+ -->
+		<id-method-parameter name="seqName" value="alert_id_seq" />
+	</table>
+	<table name="alert_archive" description="archive of security alert instances">
+		<column name="id" type="INTEGER" description="ID gets transferred from the primary alert table" required="true" primaryKey="true" />
+		<column name="source" type="VARCHAR" description="source platform for the security event" size="20" required="true" />
+		<column name="alert_def_id" type="INTEGER" description="alert definition id" required="true" />
+		<column name="src_host_id" type="INTEGER" description="src host" required="true" />
+		<column name="src_port" type="VARCHAR" description="src port" size="6" required="true" default="0" />
+		<column name="dst_host_id" type="INTEGER" description="dst host" required="true" />
+		<column name="dst_port" type="VARCHAR" description="dst port" size="6" required="true" default="0" />
+		<column name="protocol" type="VARCHAR" description="network protocol for the security event" size="6" required="true" />
+		<column name="ce" type="DOUBLE" description="cost estimator" required="true" default="0.0" />
+		<column name="te" type="DOUBLE" description="threat estimator" required="true" default="0.0" />
+		<column name="ve" type="DOUBLE" description="vuln estimator" required="true" default="0.0" />
+		<column name="rm" type="DOUBLE" description="risk metric" required="true" default="0.0" />
+		<column name="ci" type="DOUBLE" description="confidence interval" required="true" default="0.0" />
+		<column name="created" type="TIMESTAMP" description="SQL timestamp when created" required="true" />
+		<column name="tick" type="BIGINT" description="Java millisecond Unix epoch timestamp for when last updated" required="true" default="0" />
+		<index name="alert_i_timeout">
+			<index-column name="tick" />
+		</index>
+	</table>
+	<table name="alert_def" description="alert definitions">
+		<column name="id" type="INTEGER" description="ID gets automatically incremented" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="unique_id" type="VARCHAR" description="alert unique-id foreign key" size="20" required="true" />
+		<column name="alert_type_id" type="INTEGER" description="alert type" required="true" />
+		<column name="created" type="TIMESTAMP" description="SQL timestamp when created" required="true" />
+		<column name="updated" type="TIMESTAMP" description="SQL timestamp when last updated" />
+		<foreign-key foreignTable="alert_type">
+			<reference local="alert_type_id" foreign="id" />
+		</foreign-key>
+		<unique name="alert_def_u_unique_id">
+			<unique-column name="unique_id" />
+		</unique>
+<!--
+ needed as a fix for PostgreSQL v7.2 and later
+ -->
+		<id-method-parameter name="seqName" value="alert_def_id_seq" />
+	</table>
+	<table name="alert_type" description="categories of alert types">
+		<column name="id" type="INTEGER" description="ID gets automatically incremented" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="name" type="VARCHAR" description="alert type name" size="50" required="true" />
+		<column name="created" type="TIMESTAMP" description="SQL timestamp when created" required="true" />
+		<unique name="alert_type_u_name">
+			<unique-column name="name" />
+		</unique>
+<!--
+ needed as a fix for PostgreSQL v7.2 and later
+ -->
+		<id-method-parameter name="seqName" value="alert_type_id_seq" />
+	</table>
+	<table name="response" description="tracks the graduated responses used in remediation countermeasures">
+		<column name="id" type="INTEGER" description="ID gets automatically incremented" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="host_id" type="INTEGER" description="host" required="true" />
+		<column name="created" type="TIMESTAMP" description="SQL timestamp when created" required="true" />
+		<column name="tick" type="BIGINT" description="Java millisecond Unix epoch timestamp for when last updated" required="true" default="0" />
+		<column name="action" type="VARCHAR" description="kind of response action" size="20" required="true" />
+		<column name="level" type="INTEGER" description="graduated response level" required="true" default="0" />
+		<column name="file" type="VARCHAR" description="file path for XML representing recon, etc." size="50" />
+		<column name="acquittal" type="BIGINT" description="epoch tick for when to acquit" required="true" default="0" />
+		<column name="pending" type="INTEGER" description="flag whether or not some resolution is pending" required="true" default="0" />
+<!--
+ would also like to track:
+	user_name	varchar		NOT NULL
+	ip_addr		varchar		NOT NULL
+	session		varchar		NOT NULL
+ -->
+		<foreign-key foreignTable="host">
+			<reference local="host_id" foreign="id" />
+		</foreign-key>
+		<index name="response_i_report">
+			<index-column name="host_id" />
+			<index-column name="tick" />
+			<index-column name="action" />
+			<index-column name="file" />
+		</index>
+		<index name="response_i_timeout">
+			<index-column name="host_id" />
+			<index-column name="acquittal" />
+			<index-column name="pending" />
+		</index>
+<!--
+ needed as a fix for PostgreSQL v7.2 and later
+ -->
+		<id-method-parameter name="seqName" value="response_id_seq" />
+	</table>
+	<table name="host" description="provides scrubbable unique ID for each host-or-bogey, based on IP address">
+		<column name="id" type="INTEGER" description="ID gets automatically incremented" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="ip_addr" type="VARCHAR" description="IP address" size="16" required="true" />
+		<column name="created" type="TIMESTAMP" description="SQL timestamp when created" required="true" />
+		<column name="network" type="VARCHAR" description="network IP address in hex, null for bogey" size="8" />
+		<column name="country" type="VARCHAR" description="ISO 3166 country code, based on IP address" size="4" default="??" />
+		<column name="tick" type="BIGINT" description="Java millisecond Unix epoch timestamp for when last updated" required="true" default="0" />
+		<column name="linger" type="INTEGER" description="flag whether or not to keep it around" required="true" default="0" />
+		<unique name="host_u_ip_addr">
+			<unique-column name="ip_addr" />
+		</unique>
+		<index name="host_i_timeout">
+			<index-column name="tick" />
+			<index-column name="network" />
+			<index-column name="linger" />
+		</index>
+		<index name="host_i_report">
+			<index-column name="ip_addr" />
+			<index-column name="network" />
+			<index-column name="country" />
+		</index>
+<!--
+ needed as a fix for PostgreSQL v7.2 and later
+ -->
+		<id-method-parameter name="seqName" value="host_id_seq" />
+	</table>
+	<table name="users" description="system administrator user logins">
+		<column name="user_name" type="VARCHAR" description="user name" size="15" required="true" primaryKey="true" default="foo" />
+		<column name="user_pass" type="VARCHAR" description="password" size="15" required="true" default="bar" />
+		<column name="organization" type="VARCHAR" description="organization for grouping" size="40" required="true" default="admin_group" />
+		<foreign-key foreignTable="org">
+			<reference local="organization" foreign="org_name" />
+		</foreign-key>
+	</table>
+	<table name="user_roles" description="appserver security realm roles">
+		<column name="user_name" type="VARCHAR" description="user name" size="15" required="true" primaryKey="true" default="foo" />
+		<column name="role_name" type="VARCHAR" description="role name" size="15" required="true" primaryKey="true" default="opensims_admin" />
+		<foreign-key foreignTable="users">
+			<reference local="user_name" foreign="user_name" />
+		</foreign-key>
+	</table>
+	<table name="org" description="grouping of users together for ease of management">
+		<column name="org_name" type="VARCHAR" description="organization for grouping" size="40" required="true" primaryKey="true" default="org" />
+		<column name="org_desc" type="VARCHAR" description="organization description" size="80" />
+	</table>
+	<table name="host_org_link" description="Link of permissions for each host to an org group of users">
+		<column name="host_id" type="INTEGER" description="host id" />
+		<column name="organization" type="VARCHAR" description="organization for grouping" size="40" />
+		<foreign-key foreignTable="host">
+			<reference local="host_id" foreign="id" />
+		</foreign-key>
+		<foreign-key foreignTable="org">
+			<reference local="organization" foreign="org_name" />
+		</foreign-key>
+	</table>
+</database>

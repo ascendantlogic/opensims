@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+$Id: support_diagnostics.xml 1 2008-01-10 18:37:05Z smoot $
+ -->
+
+<document>
+<properties>
+<title>Support: Diagnostics</title>
+<author
+ email="lsimon@symbiot.com"
+>Lindsey SIMON</author>
+</properties>
+
+<body>
+
+<section
+ name="Support: Diagnostics"
+>
+<ul>
+
+<li>
+<p>
+<a
+ href="test"
+ target="results"
+>Webapp Operation</a>
+</p>
+</li>
+
+<li>
+<p>
+<a
+ href="appliance.crt"
+ target="results"
+>Server SSL Certificate</a>
+</p>
+</li>
+
+<li>
+<p>
+<a
+ href="plugin_test.swf"
+ target="results"
+>Flash Plugin Test</a>
+</p>
+</li>
+
+<li>
+<p>
+<a
+ href="javascript.html"
+ target="results"
+>JavaScript Browser Sniffer</a>
+</p>
+</li>
+
+</ul>
+
+<hr
+ width="40"
+/>
+
+<p>
+<iframe
+ name="results"
+ src=""
+ width="680"
+ height="445"
+>
+</iframe>
+</p>
+
+</section>
+
+</body>
+</document>

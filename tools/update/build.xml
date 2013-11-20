@@ -1,0 +1,284 @@
+<project
+ name="update"
+ default="batch"
+ basedir="."
+>
+<description>
+$CVSId: build.xml,v 1.6 2005/01/10 17:01:36 mikee Exp $
+$Id: build.xml 1 2008-01-10 18:37:05Z smoot $
+Paco NATHAN paco@symbiot.com
+
+OpenSIMS - run scheduled batch updates
+
+A typical use for updating would be:
+
+	ant batch | tee batch.txt
+
+</description>
+
+
+<!-- ######################################################################
+		global properties
+     ###################################################################### -->
+
+<property
+ name="build.dir"
+ location="${basedir}/../../build"
+/>
+<import
+ file="${build.dir}/properties.xml"
+/>
+
+
+<!-- ######################################################################
+		system management
+     ###################################################################### -->
+
+<target
+ name="set_perms"
+ description="make sure that file permissions are set appropriately"
+>
+<chmod
+ file="${basedir}/stop_services.sh"
+ perm="0775"
+/>
+<chown
+ file="${basedir}/stop_services.sh"
+ owner="${webapp.user}"
+/>
+<chgrp
+ file="${basedir}/stop_services.sh"
+ group="${webapp.group}"
+/>
+
+<!-- Refix the perms on the updates.xml file -->
+
+<chmod
+ file="${var.lib}/updates/updates.xml"
+ perm="0664"
+/>
+<chown
+ file="${var.lib}/updates/updates.xml"
+ owner="${webapp.user}"
+/>
+<chgrp
+ file="${var.lib}/updates/updates.xml"
+ group="${webapp.group}"
+/>
+
+</target>
+
+
+<target
+ name="stop_services"
+ description="stop services on the OS during an update"
+ depends="set_perms"
+>
+<exec
+ executable="${basedir}/stop_services.sh"
+/>
+</target>
+
+
+<target
+ name="reboot"
+ description="schedule a shutdown and reboot the OS"
+>
+<exec
+ executable="/sbin/shutdown"
+>
+<arg
+ value="-r"
+/>
+<arg
+ value="now"
+/>
+</exec>
+</target>
+
+
+<!-- ######################################################################
+		generate scripts
+     ###################################################################### -->
+
+<target
+ name="render_subant"
+ description="convert from updates.xml to an Ant script"
+>
+<tempfile
+ property="temp.ant.file"
+ destdir="${temp.dir}"
+ prefix="temp"
+/>
+
+<xslt
+ in="${var.lib}/updates/updates.xml"
+ out="${temp.ant.file}.xml"
+ style="${basedir}/template/render_subant.xsl"
+ force="true"
+ reloadstylesheet="true"
+>
+<param
+ name="basedir"
+ expression="${basedir}"
+/>
+</xslt>
+</target>
+
+
+<target
+ name="call_subant"
+ description="run the updates, each of which call back to this Ant build.xml"
+>
+<ant
+ antfile="${temp.ant.file}.xml"
+/>
+
+<!-- Refix the perms on the updates.xml file -->
+
+<chmod
+ file="${var.lib}/updates/updates.xml"
+ perm="0664"
+/>
+<chown
+ file="${var.lib}/updates/updates.xml"
+ owner="${webapp.user}"
+/>
+<chgrp
+ file="${var.lib}/updates/updates.xml"
+ group="${webapp.group}"
+/>
+
+
+<delete
+ file="${temp.ant.file}.xml"
+/>
+</target>
+
+
+<!-- ######################################################################
+		execute updates
+     ###################################################################### -->
+
+<target
+ name="run_updates"
+ description="execute one downloaded update"
+>
+<echo
+ message="begin update: ${description}"
+/>
+
+<!-- verify the MD5 hash of the tarball -->
+
+<checksum
+ file="${var.lib}/updates/${tarball}"
+ property="${md5.server}"
+ verifyProperty="md5.consistent"
+/>
+
+<condition
+ property="md5.fail"
+>
+<isfalse
+ value="${md5.consistent}"
+/>
+</condition>
+
+<fail
+ message="The MD5 hash of the downloaded updater, which is used for security and consistency checking, did not match."
+ if="md5.fail"
+/>
+
+<!-- create the temp dir -->
+
+<mkdir
+ dir="${temp.ant.file}.dir"
+/>
+
+<!-- untar tarball into temp dir -->
+
+<untar
+ src="${var.lib}/updates/${tarball}"
+ dest="${temp.ant.file}.dir"
+ compression="gzip"
+/>
+
+<!-- call the updater's build.xml -->
+
+<ant
+ dir="${temp.ant.file}.dir"
+/>
+
+<!-- revise status/tick in updates.xml -->
+
+<exec
+ executable="date"
+ outputproperty="tick"
+>
+<arg
+ line='+"%s000"'
+/>
+</exec>
+
+<xslt
+ in="${var.lib}/updates/updates.xml"
+ out="${temp.ant.file}.log"
+ style="${basedir}/template/revise_log.xsl"
+ force="true"
+ reloadstylesheet="true"
+>
+<param
+ name="file"
+ expression="${tarball}"
+/>
+<param
+ name="status"
+ expression="completed"
+/>
+<param
+ name="since"
+ expression="${tick}"
+/>
+</xslt>
+
+<move
+ file="${temp.ant.file}.log"
+ tofile="${var.lib}/updates/updates.xml"
+/>
+
+<!-- Refix the perms on the updates.xml file -->
+
+<chmod
+ file="${var.lib}/updates/updates.xml"
+ perm="0664"
+/>
+<chown
+ file="${var.lib}/updates/updates.xml"
+ owner="${webapp.user}"
+/>
+<chgrp
+ file="${var.lib}/updates/updates.xml"
+ group="${webapp.group}"
+/>
+
+<echo
+ message="Fixing Perms: ${var.lib}/updates/updates.xml ${webapp.user} ${webapp.group}"
+/>
+
+<!-- delete the temp dir, archive the tarball locally -->
+
+<delete
+ dir="${temp.ant.file}.dir"
+/>
+
+</target>
+
+
+<target
+ name="batch"
+ description="run all the pending updates which have been downloaded"
+ depends="render_subant,call_subant"
+/>
+
+
+</project>

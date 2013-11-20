@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd"
+>
+<!--
+OpenSIMS
+$Id: web.xml 1 2008-01-10 18:37:05Z smoot $
+
+Paco NATHAN paco@symbiot.com
+Linas VARDYS linas@symbiot.com
+
+@LICENSE@
+ -->
+
+<web-app>
+    <display-name>OpenSIMS webapp @BUILD.TAG@</display-name>
+
+    <servlet>
+        <servlet-name>SimsServlet</servlet-name>
+        <display-name>OpenSIMS webapp @BUILD.TAG@</display-name>
+        <servlet-class>org.opensims.servlet.SimsServlet</servlet-class>
+
+        <init-param>
+        <param-name>build.tag</param-name>
+        <param-value>@BUILD.TAG@</param-value>
+        </init-param>
+
+        <init-param>
+        <param-name>webapp.config</param-name>
+        <param-value>@WEBAPP.CONFIG@</param-value>
+        </init-param>
+
+        <init-param>
+        <param-name>webapp.name</param-name>
+        <param-value>@WEBAPP.NAME@</param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!--
+    servlet URL mappings
+     -->
+    
+    <servlet-mapping>
+        <servlet-name>SimsServlet</servlet-name>
+        <url-pattern>/live</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SimsServlet</servlet-name>
+        <url-pattern>/report</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SimsServlet</servlet-name>
+        <url-pattern>/support</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SimsServlet</servlet-name>
+        <url-pattern>/agent</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SimsServlet</servlet-name>
+        <url-pattern>/param</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SimsServlet</servlet-name>
+        <url-pattern>/test</url-pattern>
+    </servlet-mapping>
+
+    <!-- Define the default session timeout for your application,
+         in minutes.  From a servlet or JSP page, you can modify
+         the timeout for a particular session dynamically by using
+         HttpSession.getMaxInactiveInterval(). 
+         The 1 minute timeout should help to alleviate the extra
+         sessions we have been getting.  
+         Client Session will be set via the preceding Environment Entry,
+         Client-Timeout.
+         -->
+
+    <session-config>
+      <session-timeout>1</session-timeout>    <!-- 1 minute -->
+    </session-config>
+
+</web-app>

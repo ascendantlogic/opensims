@@ -1,0 +1,79 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\b\fs22 \cf2 From: 
+\f1\b0 \cf3 "Dan S. Camper" <dan@bti.net>\
+
+\f0\b \cf2 Date: 
+\f1\b0 \cf3 29 December 2003 08:10:48 CST\
+
+\f0\b \cf2 To: 
+\f1\b0 \cf3 "William W. Hurley" <whurley@symbiot.com>\
+
+\f0\b \cf2 Cc: 
+\f1\b0 \cf3 Paco Nathan <paco@symbiot.com>\
+
+\f0\b \cf2 Subject: \cf3 Agent dependencies\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf3 -----BEGIN PGP SIGNED MESSAGE-----\
+Hash: SHA1\
+\
+This is a follow-up to our meeting on the 23rd.\
+\
+- -----------------------\
+\
+libsymbiot (the library) depends on the following 3rd party libraries:\
+\
+* expat: http://sourceforge.net/projects/expat/\
+\
+The source code for expat 1.95.7 (the current release) is currently included\
+with the libsymbiot code.  The configuration script for libsymbiot will use\
+an already-installed version of expat if it is the current release, or it\
+will build the included version if either expat is not available or if it is\
+not the current release.  Note that if the included expat is built, then\
+expat's code is included directly into libsymbiot -- it is not installed\
+onto the system as a library, which is what the expat configuration script\
+usually does.\
+\
+* OpenSSL: http://www.openssl.org/\
+\
+The library requires that OpenSSL already be installed on the destination\
+system.\
+\
+- -----------------------\
+\
+symagent-network (the agent that watches network traffic) depends on:\
+\
+* pcap: http://www.tcpdump.org/\
+\
+Currently, the agent requires that libpcap already be installed on the\
+destination system like OpenSSL, above.  However, I intend to change the\
+behavior to match expat (above), in that it will use an already-available\
+libpcap if possible or an included version will be built if necessary.\
+\
+- -----------------------\
+\
+These are the only dependencies to date.\
+\
+DSC\
+\
+-----BEGIN PGP SIGNATURE-----\
+Version: PGP 8.0.3\
+\
+iQA/AwUBP/An0vHX8q+q4UMVEQLluQCg6Z3V4x3ZeToh16tmsaD7GH7rQ10AnAt+\
+vqpD5JN465B1c+pvyUPUO9H7\
+=eVvI\
+-----END PGP SIGNATURE-----\
+\
+\
+_________________________________________________________________________\
+Dan S. Camper                                         Borrowed Time, Inc.\
+Software Thaumaturge                                   http://www.bti.net\
+                                                  Toll-Free: 877.451.8939\
+                                                      Texas: 512.451.8939\
+\
+}

@@ -1,0 +1,86 @@
+#!/bin/sh
+
+# Sat Dec 11 12:51:29 CST 2004
+# Symbiot Internal - osims.sync
+#
+# This script is used to build a currently running opensims by checking out the
+# CVS trees applicable. It is intended to be run on "opensims.symbiot.com"
+# immediately after running the "osims.chroot" script which takes the last
+# known working image and installs it in the "/opensims" directory. 
+#
+# NOTE: This procedure NEEDS to be run from a chrooted environement to
+#       keep it separate from the latest image. 
+#        "chroot /opensims /bin/bash"
+#        "env-update && source /etc/profile"
+# 
+# Mike ERWIN <mikee@symbiot.com>
+# Jamie PUGH <jamie@symbiot.com>
+#
+
+#------------------------------------------------------------------------
+# Initial Cleanup from the Old Image installation
+#------------------------------------------------------------------------
+#rm -rf /var/ssl;
+
+# Postgres is needed for the preflight checklist of opensims
+/etc/init.d/postgresql restart;
+
+# Start from scratch
+dropdb -U postgres opensims;
+
+#------------------------------------------------------------------------
+# CVS is not normally part of the image, get it and setup its env.
+#------------------------------------------------------------------------
+emerge cvs;
+export CVSROOT=:ext:symbiot@cvs.symbiot.com:/cvs;
+export CVS_RSH=ssh;
+
+#------------------------------------------------------------------------
+# Build a functional "build.properties" file
+#  Note: This should be done with a here-doc, but for now, it'll work.
+#------------------------------------------------------------------------
+BUILD_PROPERTIES="/home/symbiot/build.properties";
+
+echo "fqdn=opensims.symbiot.com" > $BUILD_PROPERTIES;
+echo "opensims.home=/usr/local/opensims" >> $BUILD_PROPERTIES;
+echo "isims.home=/usr/local/isims" >> $BUILD_PROPERTIES;
+echo "db.platform = postgresql" >> $BUILD_PROPERTIES;
+echo "db.jdbc.driver = org.postgresql.Driver" >> $BUILD_PROPERTIES;
+echo "db.jdbc.jar = /opt/tomcat5/common/lib/pg74.215.jdbc3.jar" >> $BUILD_PROPERTIES;
+echo "db.user = postgres" >> $BUILD_PROPERTIES;
+echo "db.password = " >> $BUILD_PROPERTIES;
+echo "db.super_user = postgres" >> $BUILD_PROPERTIES;
+echo "db.super_password = " >> $BUILD_PROPERTIES;
+echo "gpg.home=/root/.gnupg" >> $BUILD_PROPERTIES;
+echo "repository.email=ca\@symbiot.net" >> $BUILD_PROPERTIES;
+echo "repository.url=https://dev.symbiot.net:8443/snet" >> $BUILD_PROPERTIES;
+echo "repository.user=dev" >> $BUILD_PROPERTIES;
+echo "repository.password=dev" >> $BUILD_PROPERTIES;
+echo "nagios.dir=/opt/nagios-1.2" >> $BUILD_PROPERTIES;
+echo "nagios.log=/opt/nagios-1.2/var/status.log" >> $BUILD_PROPERTIES;
+echo "snort.rules=/etc/snort" >> $BUILD_PROPERTIES;
+echo "smack.jar=/opt/tomcat/common/lib/smack.jar" >> $BUILD_PROPERTIES;
+
+#------------------------------------------------------------------------
+# Get the latest opensims code from the CVS repository
+#------------------------------------------------------------------------
+cd /usr/local;
+cvs co opensims;
+cp $BUILD_PROPERTIES /usr/local/opensims/build;
+
+# Build the opensims "current" distro from CVS (Ditto on all)
+cd /usr/local/opensims;
+ant preflight;
+ant -v install | tee install.txt;
+
+#cd /usr/local/opensims/agent;
+#ant clean configure build;
+
+cd /usr/local/opensims/tools/torque;
+ant clean config build;
+
+cd /usr/local/opensims/webapp;
+ant compile build deploy;
+
+chown tomcat:tomcat /etc/opensims/webapp.xml;
+chmod 664 /etc/opensims/webapp.xml;

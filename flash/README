@@ -1,0 +1,38 @@
+//------------------------------------------------------------------//
+// OPENSIMS REAME
+//
+// author: Lindsey Simon <lsimon@symbiot.com>
+//------------------------------------------------------------------//
+
+
+Chances are that if you're reading this, you're an actionscripter.
+Please email any code patches/suggestions you think of!
+What follows is a breakdown of the structure of openSIMS.
+
+
+FILE                          DESCRIPTION
+----------------------------------------------------------------------
+openSIMS.flp			Flash project file with all .fla's
+
+index.fla			Loads in bulk of global codebase
+- navbar.as			Buttons and layout
+- global_config.as		Reads config.xml and globalizes values	
+- global_lib.as			Functions used throughout
+- global_styles.as		Font style formats for dynamic text
+- socket_lib.as			Handles connections to Java socket
+- DynTween.as			Tatsuo Kato's tweening prototypes
+- DynColorTween.as		see http://www.tatsuokato.com	
+- FDraggableWindow.as		Component code for windows
+- LS_FScrollPane.as		Modified scrollpane for FDraggableWindow
+
+components_lib.fla/swf		All shared components/fonts
+
+live.fla/swf (live.as)		Live visualization, loads live.as
+- live_config.as		openSIMS specific functions
+- live_ATKDEF.as		Attacker/Defender specific functions
+
+plugin_test.fla/swf		Flash plugin test output
+
+reports.fla/swf (reports.as)	Reports page
+
+support.fla/swf (support.as)	Support page	

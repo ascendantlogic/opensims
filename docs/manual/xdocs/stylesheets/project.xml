@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+ name="OpenSIMS"
+ href="http://opensims.org/"
+>
+
+<title>OpenSIMS</title>
+<body>
+
+<menu
+ name="Chapters"
+>
+<item
+ name="Welcome"
+ href="/index.html"
+/>
+
+<item
+ name="Introduction"
+ href="/intro.html"
+/>
+
+<item
+ name="Dependencies"
+ href="/depend.html"
+/>
+
+<item
+ name="Getting Started"
+ href="/get_started.html"
+/>
+
+<item
+ name="File Layout"
+ href="/file_layout.html"
+/>
+
+<item
+ name="Feature Highlights"
+ href="/highlights.html"
+/>
+
+<item
+ name="Supported Devices"
+ href="/supdev.html"
+/>
+
+<item
+ name="Compiling Source"
+ href="/compile.html"
+/>
+
+</menu>
+        
+<menu
+ name="Appendices"
+>
+<item
+ name="HOWTO: Flash GUI"
+ href="/flash.html"
+/>
+
+<item
+ name="HOWTO: AgentSDK"
+ href="/agent.html"
+/>
+
+<item
+ name="Error Codes"
+ href="/err_codes.html"
+/>
+
+<item
+ name="References"
+ href="/reference.html"
+/>
+
+<item
+ name="Contributors"
+ href="/contrib.html"
+/>
+
+<item
+ name="About"
+ href="/about.html"
+/>
+</menu>
+
+</body>
+</project>

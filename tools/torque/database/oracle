@@ -1,0 +1,18 @@
+# $CVSId: oracle,v 1.4 2004/08/17 15:42:04 paco Exp $
+# $Id$
+# database properties
+
+# JDBC updates: http://www.oracle.com/technology/software/tech/java/sqlj_jdbc/index.html
+# driver settings in the OpenSIMS properties will look something like:
+#
+#   db.jdbc.driver = oracle.jdbc.driver.OracleDriver
+#   db.jdbc.jar = /u01/app/oracle/OraHome1/jdbc/lib/ojdbc14.jar
+
+databaseName = ${tdk.project}
+databaseSchema = ${tdk.project}
+
+createDatabaseUrl = jdbc:oracle:thin:@localhost:1521:${tdk.project}
+buildDatabaseUrl = jdbc:oracle:thin:@localhost:1521:${tdk.project}
+databaseUrl = jdbc:oracle:thin:@localhost:1521:${tdk.project}
+
+torque.database.validationQuery = SELECT 1 FROM DUAL

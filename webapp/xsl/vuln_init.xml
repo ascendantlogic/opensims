@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+$Id: vuln_init.xml 1 2008-01-10 18:37:05Z smoot $
+XML definitions for GUI design
+Paco NATHAN paco@symbiot.com
+ -->
+
+<INIT>
+<!--
+ REGULAR TRAFFIC
+ green
+ -->
+<VULN_TYPE
+ id="1"
+ color="0x006600"
+ label="Regular Traffic"
+ description="No attack signature."
+ color_anim="0xFFFF00"
+/>
+
+<!--
+ BLOCKED TRAFFIC
+ grey
+ -->
+<VULN_TYPE
+ id="2"
+ color="0xAAAAAA"
+ label="Blocked Traffic"
+ description="No attack signature."
+ color_anim="0xFF0006"
+/>
+
+<!--
+ BLOCKED ATTACK
+ brown
+ -->
+<VULN_TYPE
+ id="3"
+ color="0x661E02"
+ label="Blocked Attack"
+ description="Signature matched."
+ color_anim="0xFDD601"
+/>
+
+<!--
+ SHADOW SERVICE
+ white?
+ -->
+<VULN_TYPE
+ id="4"
+ color="0xFFFFFF"
+ label="Shadow Service"
+ description="Attack traffic - allowed, signature matched, service doesn't exist."
+ color_anim="0xFD01BF"
+/>
+
+<!--
+ NEEDS DETAIL
+ orange
+ -->
+<VULN_TYPE
+ id="5"
+ color="0x333333"
+ label="Needs Detail"
+ description="Attack traffic - allowed, signature matched, host not profiled."
+ color_anim="0xFFCC33"
+/>
+
+<!--
+ KNOWN THREAT
+ blue
+ -->
+<VULN_TYPE
+ id="6"
+ color="0x3366CC"
+ label="Known Threat"
+ description="Attack traffic - allowed, signature matched, service exists."
+ color_anim="0xCDE722"
+/>
+
+<!--
+ VULNERABILITY
+ red
+ -->
+<VULN_TYPE
+ id="7"
+ color="0xFF0000"
+ label="Vulnerability"
+ description="Attack traffic - allowed, signature match, svc avail, version matches."
+ color_anim="0xFFFFFF"
+/>
+
+<!--
+ SHADOW BREACH
+ purple
+ -->
+<VULN_TYPE
+ id="8"
+ color="0x990099"
+ label="Shadow Breach"
+ description="Attempted to connect to internal service."
+ color_anim="0x660033"
+/>
+
+<!--
+ FIREWALL BREACH
+ white
+ -->
+<VULN_TYPE
+ id="9"
+ color="0xFFFFFF"
+ label="Firewall Breach"
+ description="Connects to available internal service."
+ color_anim="0xFD01BF"
+/>
+
+<!--
+ FIREWALL ATTACK
+ white
+ -->
+<VULN_TYPE
+ id="10"
+ color="0xFFFFFF"
+ label="Firewall Attack"
+ description="Connects to available internal service, with signature."
+ color_anim="0xFD01BF"
+/>
+
+<!--
+ OUTBOUND ALERT
+ white
+ -->
+<VULN_TYPE
+ id="11"
+ color="0xFFFFFF"
+ label="Outbound Alert"
+ description="Result signature found - outbound attack."
+ color_anim="0xFD01BF"
+/>
+
+<!--
+ POSSIBLE WORM
+ white
+ -->
+<VULN_TYPE
+ id="12"
+ color="0xFFFFFF"
+ label="Possible Worm"
+ description="Result signature found - outbound attack follows inbound."
+ color_anim="0xFD01BF"
+/>
+
+<!--
+ UNEXPECTED BACKDOOR
+ white
+ -->
+<VULN_TYPE
+ id="13"
+ color="0xFFFFFF"
+ label="Unexpected Backdoor"
+ description="Unexpected backdoor."
+ color_anim="0xFD01BF"
+/>
+
+<!--
+ BACKDOOR ATTACK
+ white
+ -->
+<VULN_TYPE
+ id="14"
+ color="0xFFFFFF"
+ label="Backdoor Attack"
+ description="Attack on an unexpected backdoor."
+ color_anim="0xFD01BF"
+/>
+</INIT>

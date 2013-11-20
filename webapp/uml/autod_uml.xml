@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ $Id: autod_uml.xml 1 2008-01-10 18:37:05Z smoot $
+ OpenSIMS - autodiscovery state machine definitions
+
+ Paco NATHAN paco@symbiot.com
+ Mike W. ERWIN mikee@symbiot.com
+
+@LICENSE@
+
+
+Realistically, this finite state machine should be generated from
+something like XMI:
+
+We've got a UML activity diagram which has about a dozen states and
+only a few kinds of input events.  It defines a sequencer for a
+network autodiscovery process managed by a Tomcat webapp, as part of
+OpenSIMS which is a key component in the Ceteri project.
+
+The webapp configures a set of agents that talk with network security
+devices, and each agent has configurable plugins.  The system uses XML
+data representation throughout.  So really, the "sequencer" is kinda
+like a series of XSL transforms which send config statements to the
+agents (for their plugins) as XML snippets.  Meanwhile, the
+autodiscovery process builds up an XML model of the local network DMZ.
+
+Both the client and the server mirror each other with a "plugin"
+approach.  On the webapp one can extend some Java classes which define
+key elements of OpenSIMS, such as agents, their plugins,
+notifications, types of scans (NMAP, AMAP, PCAP, SNMP, firewalk), etc.
+So far, that's all being driven by an XML config file for the webapp.
+
+See the "docs/pdf" directory for "autod_uml.pdf" documentation.
+
+ -->
+<UML_ACTIVITY name="OpenSIMS active-mode network autodiscovery statechart" initial_state="start" package="org.opensims.model" interface="AutoDiscovery" class="org.opensims.model.GenericScan">
+	<STATE name="start" description="starting point for network autodiscovery">
+		<TRANSIT next="model_loaded" trigger="agent.login">
+			<ACTION method="loadModelFile" />
+		</TRANSIT>
+	</STATE>
+	<STATE name="model_loaded" description="stored version of network model has been loaded, check permission to scan">
+		<TRANSIT next="discover_active">
+			<GUARD method="networkAllows" param="discovery" />
+		</TRANSIT>
+	</STATE>
+	<STATE name="discover_active" description="network autodiscovery is in its active phase">
+		<TRANSIT next="arp_scan" trigger="agent.heartbeat">
+			<GUARD method="networkAllows" param="symplugin-mac-lookup.arp_scan" />
+			<ACTION method="setReceipt" param="scan" />
+			<MARK interval="agent.scan_interval" />
+		</TRANSIT>
+	</STATE>
+	<STATE name="arp_scan" description="scan the LAN to map known MAC addresses to host IP addresses">
+		<ACTION method="configPlugin" param="symplugin-mac-lookup.arp_scan" />
+		<TRANSIT next="hosts_identified" trigger="agent.receipt">
+			<GUARD method="waitKnownReceipts" />
+		</TRANSIT>
+	</STATE>
+	<STATE name="hosts_identified" description="host list is updated, now sync it with the database">
+		<ACTION method="setCorrelationEnable" param="true" />
+		<ACTION method="updateHostAssignments" />
+		<ACTION method="saveModelFile" />
+		<TRANSIT next="hosts_fingerprint">
+			<GUARD method="networkAllows" param="symplugin-nmap.fingerprint" />
+			<ACTION method="setReceipt" param="hosts" />
+		</TRANSIT>
+		<TRANSIT next="hosts_ping">
+			<GUARD method="networkAllows" param="symplugin-nmap.ping" />
+			<ACTION method="setReceipt" param="hosts" />
+		</TRANSIT>
+		<TRANSIT next="hosts_updated" />
+	</STATE>
+	<STATE name="hosts_fingerprint" description="use aggressive probe techniques to guess a host arch/platform/os">
+		<ACTION method="configPlugin" param="symplugin-nmap.fingerprint" />
+		<TRANSIT next="loop_fingerprint" trigger="agent.receipt" />
+	</STATE>
+	<STATE name="loop_fingerprint" description="collect hosts fingerprint data">
+		<TRANSIT next="hosts_updated">
+			<GUARD method="waitKnownReceipts" />
+		</TRANSIT>
+		<TRANSIT next="hosts_fingerprint" />
+	</STATE>
+	<STATE name="hosts_ping" description="use limited, ping-like techniques to test whether each host is up">
+		<ACTION method="configPlugin" param="symplugin-nmap.ping" />
+		<TRANSIT next="loop_ping" trigger="agent.receipt" />
+	</STATE>
+	<STATE name="loop_ping" description="collect hosts ping data">
+		<TRANSIT next="hosts_updated">
+			<GUARD method="waitKnownReceipts" />
+		</TRANSIT>
+		<TRANSIT next="hosts_ping" />
+	</STATE>
+	<STATE name="hosts_updated" description="per-host details are completed, consider per-service details">
+		<ACTION method="saveModelFile" />
+		<TRANSIT next="services_probe">
+			<GUARD method="networkAllows" param="symplugin-nmap.services_probe" />
+			<ACTION method="setReceipt" param="services" />
+		</TRANSIT>
+		<TRANSIT next="port_scan">
+			<GUARD method="networkAllows" param="symplugin-nmap.port_scan" />
+			<ACTION method="setReceipt" param="services" />
+		</TRANSIT>
+		<TRANSIT next="services_updated" />
+	</STATE>
+	<STATE name="services_probe" description="use aggressive protocol analysis probing techniques to analyze applications and versions">
+		<ACTION method="configPlugin" param="symplugin-nmap.services_probe" />
+		<TRANSIT next="loop_probe" trigger="agent.receipt" />
+	</STATE>
+	<STATE name="loop_probe" description="collect services probe data">
+		<TRANSIT next="services_updated">
+			<GUARD method="waitKnownReceipts" />
+		</TRANSIT>
+		<TRANSIT next="services_probe" />
+	</STATE>
+	<STATE name="port_scan" description="use limited port scan techniques to map services per-host">
+		<ACTION method="configPlugin" param="symplugin-nmap.port_scan" />
+		<TRANSIT next="loop_scan" trigger="agent.receipt" />
+	</STATE>
+	<STATE name="loop_scan" description="collect port scan data">
+		<TRANSIT next="services_updated">
+			<GUARD method="waitKnownReceipts" />
+		</TRANSIT>
+		<TRANSIT next="port_scan" />
+	</STATE>
+	<STATE name="services_updated" description="per-service details are completed, shift into passive phase">
+		<ACTION method="saveModelFile" />
+		<TRANSIT next="discover_passive">
+			<MARK interval="agent.scan_interval" />
+		</TRANSIT>
+	</STATE>
+	<STATE name="traffic_monitor" description="placeholder: background network traffic behavioral modeling" />
+	<STATE name="discover_passive" description="network autodiscovery is in its passive phase">
+		<ACTION method="transmitToRepository" />
+		<TRANSIT next="discover_active" trigger="agent.heartbeat">
+			<WAIT interval="agent.scan_interval" period="604800000" />
+		</TRANSIT>
+	</STATE>
+</UML_ACTIVITY>

@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+
+print 'eth0      Link encap:Ethernet  HWaddr 00:04:76:38:8F:A4  
+          inet addr:67.107.81.202  Bcast:67.107.81.223  Mask:255.255.255.224
+          inet6 addr: fe80::204:76ff:fe38:8fa4/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:14492168 errors:1 dropped:0 overruns:0 frame:1
+          TX packets:9295814 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:219406 txqueuelen:1000 
+          RX bytes:3578718712 (3412.9 Mb)  TX bytes:1574798001 (1501.8 Mb)
+          Interrupt:16 Base address:0xb400 
+
+eth1      Link encap:Ethernet  HWaddr 00:04:AC:C5:08:A0  
+          inet addr:172.16.1.254  Bcast:172.16.1.255  Mask:255.255.255.0
+          inet6 addr: fe80::204:acff:fec5:8a0/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1813141 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:12954286 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:118048239 (112.5 Mb)  TX bytes:616450573 (587.8 Mb)
+          Interrupt:22 Base address:0x7000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:2124625 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:2124625 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:530266493 (505.7 Mb)  TX bytes:530266493 (505.7 Mb)
+
+';

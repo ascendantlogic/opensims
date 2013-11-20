@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ALERT_TYPES>
+
+<!--
+$Id: alert_types_template.xml 1 2008-01-10 18:37:05Z smoot $
+OpenSIMS - default alert types template
+
+Mike ERWIN mikee@symbiot.com
+Paco NATHAN paco@symbiot.com
+Jim NASBY jnasby@symbiot.com
+
+@LICENSE@
+ -->
+
+<ALERT_TYPE
+ name="spam"
+ color="00DD66"
+>
+</ALERT_TYPE>
+
+<ALERT_TYPE
+ name="service"
+ color="13579A"
+>
+</ALERT_TYPE>
+
+<ALERT_TYPE
+ name="portscan"
+ color="AAAAAA"
+>
+<SEARCH
+ query="((port scan) OR (os finger print))"
+/>
+<REF
+ ref="google"
+ url="http://www.google.com/search?q="
+ path="define+port+scan"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="flow-portscan:"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_portscan2: Portscan detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_portscan: Portscan Detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_portscan: Portscan Ended"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_portscan: Portscan Status"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: FIN Stealth Scan"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: Full XMAS Stealth Scan"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: NMAP Fingerprint Stateful Detection"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: NMAP XMAS Stealth Scan"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: NULL Stealth Scan"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: SAPU Stealth Scan"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: SYN FIN Stealth Scan"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: TCP forward overlap detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: VECNA Stealth Scan"
+/>
+</ALERT_TYPE>
+
+<ALERT_TYPE
+ name="bad_traffic"
+ color="990099"
+>
+<SEARCH
+ query="((ip fragment) OR (ip spoof) OR (address spoof) OR (arp poison))"
+/>
+<REF
+ ref="google"
+ url="http://www.google.com/search?q="
+ path="((bad+traffic)+OR+(ip+fragment)+OR+(ip+spoof)+OR+(address+spoof)+OR+(arp+poison))"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Potentially Bad Traffic"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="WARNING: EAP Header Truncated"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="WARNING: EAP Key Truncated"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="WARNING: ICMP Address Header Truncated"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="WARNING: ICMP Header Truncated"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="WARNING: ICMP Timestamp Header Truncated"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="WARNING: TCP Data Offset is less than 5"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="WARNING: TCP packet len is smaller than 20 bytes"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="WARNING: Truncated EAP Header"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="WARNING: Truncated UDP Header"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="WARNING: Unknown Datagram decoding problem"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="WARNING: Unknown Datagram decoding problem"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="generic : WARNING: Not IPv4 datagram"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="generic : WARNING: Not IPv4 datagram"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="generic : WARNING: hlen"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="snort_decoder:"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_arpspoof: Directed ARP Request"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_arpspoof: Etherframe ARP Mismatch DST"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_arpspoof: Etherframe ARP Mismatch SRC"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_conversation: Bad IP protocol"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_defrag: Stale Fragments Discarded"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_frag2: Duplicate first fragments"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_frag2: IP Options on Fragmented Packet"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_frag2: Out of order fragments"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_frag2: Oversized Frag"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_frag2: TTL evasion detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_frag2: overlap detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_minfrag: minfrag alert"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="tag: Tagged Packet"
+/>
+</ALERT_TYPE>
+
+<ALERT_TYPE
+ name="misc"
+ color="AAAA00"
+>
+<SEARCH
+ query="((computer OR network OR information) security)"
+/>
+<REF
+ ref="google"
+ url="http://www.google.com/search?q="
+ path="((computer+OR+network+OR+information)+security)"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="snort general alert"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_anomsensor: SPADE Anomaly Threshold Adjusted"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_anomsensor: SPADE Anomaly Threshold Exceeded"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_frag2: memcap exceeded"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_unidecode: Invalid Mapping"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_unidecode: Unknown Mapping"
+/>
+</ALERT_TYPE>
+
+<ALERT_TYPE
+ name="exploit"
+ color="FF0000"
+>
+<SEARCH
+ query="(exploit OR (buffer overflow))"
+/>
+<REF
+ ref="google"
+ url="http://www.google.com/search?q="
+ path="define+exploit"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="A system call was detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Attempted Administrator Privilege Gain"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Attempted User Privilege Gain"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="BACKDOOR"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Executable code was detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Misc Attack"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Successful Administrator Privilege Gain"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Successful User Privilege Gain"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Unsuccessful User Privilege Gain"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Web Application Attack"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="http_decode: CGI NULL Byte Attack"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="http_decode: Unicode Attack"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="sendmail prescan too long addresses overflow"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_arpspoof: ARP Cache Overwrite Attack"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_asn1: ASN.1 Attack: Datum length"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_asn1: ASN.1 oversized item"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_asn1: ASN.1 spec violation"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_asn1: Indefinite ASN.1 length encoding"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_asn1: Invalid ASN.1 length encoding"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_bo: Back Orifice Traffic Detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_fnord: Possible Mutated GENERIC NOP Sled detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_fnord: Possible Mutated HPPA NOP Sled detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_fnord: Possible Mutated IA32 NOP Sled detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_fnord: Possible Mutated SPARC NOP Sled detected"
+/>
+</ALERT_TYPE>
+
+<ALERT_TYPE
+ name="probe"
+ color="3366CC"
+>
+<SEARCH
+ query="(probe)"
+/>
+<REF
+ ref="google"
+ url="http://www.google.com/search?q="
+ path="define+network+security+probe"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="A client was using an unusual port"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="A suspicious filename was detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="A suspicious string was detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="An attempted login using a suspicious username was detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Attempt to login by a default username and password"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Attempted Information Leak"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="DNS SPOOF query"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Decode of an RPC Query"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Detection of a Network Scan"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Information Leak"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Large Scale Information Leak"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="NETBIOS:"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="access to a potentially vulnerable web application"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="http_decode: double encoding detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="http_decode: illegal hex values detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="http_decode: large method attempted"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="http_decode: missing uri"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="http_decode: overlong character detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="http_inspect:"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_rpc_decode: Fragmented RPC Records"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_rpc_decode: Incomplete RPC segment"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_rpc_decode: Large RPC Record Fragment"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_rpc_decode: Multiple Records in one packet"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: Data on SYN Packet"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: Evasive Reset Packet"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: Evasive retransmitited data attempt"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: Evasive retransmitited data with the data split attempt"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: Multiple acked"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: Retransmission"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: Stealth Activity Detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: TTL Evasion attempt"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_stream4: Window Violation"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_unidecode: CGI NULL Attack"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_unidecode: Directory Traversal"
+/>
+</ALERT_TYPE>
+
+<ALERT_TYPE
+ name="dos"
+ color="DD6600"
+>
+<SEARCH
+ query="(ddos OR (denial of service))"
+/>
+<REF
+ ref="google"
+ url="http://www.google.com/search?q="
+ path="(ddos+OR+(denial+of+service))"
+/>
+<REF
+ ref="url"
+ url="http://"
+ path="www.cert.org/tech_tips/denial_of_service.html"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Attempted Denial of Service"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Denial of Service"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Detection of a Denial of Service Attack"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_defrag: Fragmentation Overflow Detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="spp_frag2: Teardrop/Fragmentation Overlap Attack"
+/>
+</ALERT_TYPE>
+
+<ALERT_TYPE
+ name="policy"
+ color="555555"
+>
+<SEARCH
+ query="(policy violation)"
+/>
+<REF
+ ref="google"
+ url="http://www.google.com/search?q="
+ path="define+policy+violation"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="A TCP connection was detected"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Detection of a non-standard protocol or event"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Generic ICMP event"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Generic Protocol Command Decode"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Misc activity"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Not Suspicious Traffic"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Potential Corporate Privacy Violation"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="SCORE! Get the lotion!"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="Unknown Traffic"
+/>
+</ALERT_TYPE>
+
+<ALERT_TYPE
+ name="malware"
+ color="008800"
+>
+<SEARCH
+ query="(malware OR worm OR virus OR trojan OR backdoor)"
+/>
+<REF
+ ref="google"
+ url="http://www.google.com/search?q="
+ path="define+malware"
+/>
+<REF
+ ref="wikipedia"
+ url="http://en.wikipedia.org/wiki/"
+ path="Malware"
+/>
+<SNORT_CLASS
+ field="class"
+ pattern="A Network Trojan was detected"
+/>
+</ALERT_TYPE>
+
+</ALERT_TYPES>

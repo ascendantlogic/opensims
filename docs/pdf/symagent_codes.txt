@@ -1,0 +1,41 @@
+The agent SDK implements a client/server communication with the J2EE
+servlets via the HTTP protocol over SSL.
+
+Definitive documentation for the response status codes for HTTP-based
+resources is specified in RFC 2616, "HTTP/1.1", particularly in
+sections 6 and b10:
+
+	http://www.faqs.org/rfcs/rfc2616.html
+
+The status codes which the server will use to respond to agent
+requests include the following:
+
+  200  SC_OK		"OK"
+
+This indicates normal operation, i.e. the agent keeps going.
+
+  202  SC_ACCEPTED	"agent is not provisioned yet"
+
+The agent's login was received, and appears to be in the appropriate
+format, but there is not provisioning/configuration authorized for
+this agent yet.  The agent should wait for a while and then try again.
+(See RFC 2616, section 10.2.3).
+
+  400  SC_BAD_REQUEST	"agent protocol error"
+
+There was a problem with the request XML format or login data
+provided, such that the request cannot be understood within the
+context of the agent protocol.  Kill the agent/plugin causing the
+problems.  (See RFC 2616, section 10.4.1).
+
+  599  SC_SERVER_ERROR	"database is unavailable"
+
+The database or some other critical system on the server side is not
+available.  The agent should wait for a while and then try again.
+(See RFC 2616, section 10.5)
+
+
+There could be other cases where a SC_CONFLICT (409) may be used, for
+instance if the server detects something untoward in the values of
+app_signature, mac_addr, guid, platform, etc. -- this is TO BE
+DETERMINED.

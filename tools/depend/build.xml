@@ -1,0 +1,86 @@
+<project
+ name="depend"
+ default="preflight"
+ basedir="."
+>
+
+<!--
+@LICENSE@
+
+Lindsey SIMON lsimon@symbiot.com
+Paco NATHAN paco@symbiot.com
+
+ -->
+
+<description>
+$CVSId: build.xml,v 1.1 2004/09/16 15:50:46 paco Exp $
+$Id: build.xml 1 2008-01-10 18:37:05Z smoot $
+
+OpenSIMS - dependency checks
+
+After that, a typical use-case target sequence would be:
+
+	ant -v preflight | tee install.txt
+
+</description>
+
+
+<!-- ######################################################################
+		global properties
+     ###################################################################### -->
+
+<property
+ name="build.dir"
+ location="${basedir}/../../build"
+/>
+<import
+ file="${build.dir}/properties.xml"
+/>
+
+
+<!-- ######################################################################
+		installer tasks
+     ###################################################################### -->
+
+<target
+ name="set_perms"
+ description="make sure that file permissions are set appropriately"
+>
+<chmod
+ file="${basedir}/dep_test_getopt.pl"
+ perm="0775"
+/>
+<chmod
+ file="${basedir}/dep_test_htmlentities.pl"
+ perm="0775"
+/>
+<chmod
+ file="${basedir}/dependencies.pl"
+ perm="0775"
+/>
+</target>
+
+
+<target
+ name="preflight"
+ description="run the dependencies checking"
+ depends="set_perms"
+>
+<echoproperties/>
+
+<exec
+ dir="${basedir}"
+ executable="${basedir}/dependencies.pl"
+ output="${build.dir}/depends.txt"
+/>
+
+<concat>
+<fileset
+ dir="${build.dir}"
+ includes="depends.txt"
+/>
+</concat>
+</target>
+
+
+</project>

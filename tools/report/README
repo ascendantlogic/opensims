@@ -1,0 +1,95 @@
+$CVSId: README,v 1.1 2004/08/20 21:55:48 paco Exp $
+$Id: README 1 2008-01-10 18:37:05Z smoot $
+Paco NATHAN <paco@symbiot.com>
+
+
+A simple, effective method for prototyping a new report in OpenSIMS is
+as follows...
+
+1/
+
+Select the name you want to use in a URL for the new report.  For
+example, see how the name "foobar" is used in this URL:
+
+	https://example.com:8443/opensims/report?name=foobar&days=23
+
+2/
+
+Create an XSL transform for the new report, using one of the existing
+transform files in "opensims/webapp/xsl" as an example:
+
+	pushd ../../webapp/xsl
+	cp rpt_incident.xsl rpt_foobar.xsl
+	popd
+
+3/
+
+Extend one of the Java classes used for reporting.  In practice you
+generally only need to write new code for the "getContent()" method.
+
+See http://opensims.org/docs/javadoc/org/opensims/report/package-summary.html
+
+Let's say you call that class "FoobarReport.java" in the same
+directory as the other report classes:
+
+	pushd ../../java/org/opensims/report
+	cp IncidentReport.java FoobarReport.java
+	emacs FoobarReport.java
+	popd
+
+4/
+
+Add a new <REPORT/> node in the "/etc/opensims/webapp.xml" webapp
+config file, tying together the three things you've just done:
+
+	<REPORT
+	 name="foobar"
+	 transform="rpt_foobar.xsl"
+	 class="org.opensims.report.FoobarReport"
+	 enabled="true"
+	/>
+
+5/
+
+Compile, build, deploy, and restart the OpenSIMS webapp:
+
+	pushd ../../webapp/
+	ant build deploy
+	sudo bash
+	/etc/init.d/symagent stop
+	/etc/init.d/tomcat stop
+	/etc/init.d/tomcat start
+	/etc/init.d/symagent start
+	popd
+
+
+You new have a new "foobar" report running.  Next, use this tool (the
+current "tools/report" directory) for iterating on how the report gets
+rendered.  A simple trick is to edit the "build/log4j.properties" file
+and turn logging up to "DEBUG" level for the "GenericReport" object:
+
+	log4j.logger.org.opensims.report.GenericReport = DEBUG
+
+Then watch the log while you try to access the URL for that report:
+
+	tail -f /var/log/opensims/webapp_message_log.txt
+
+With the "DEBUG" level on "GenericReport", that class will dump out
+the source XML that is being used in the XSLT transform during the
+call to the "getContent()" method in your "FoobarReport.java" class.
+
+Copy that XML source, and paste it into a file called "in.xml" in this
+directory:
+
+	cat > in.xml
+
+You can call that XML source file whatever you like, but the rest of
+this tutorial uses the "in.xml" file.
+
+Next, run this test rig:
+
+	ant -Dxsl_file=../../webapp/xsl/rpt_foobar.xsl
+
+Check the "out.html" for results.  Now you can iterate over making
+edits to the XSLT transform, in place, and see the results after each
+edit.

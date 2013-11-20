@@ -1,0 +1,62 @@
+<project
+ name="lingo"
+ default="install"
+ basedir="."
+>
+
+<!--
+@LICENSE@
+
+Paco NATHAN paco@symbiot.com
+ -->
+
+<description>
+$CVSId: build.xml,v 1.1 2004/09/30 23:33:21 paco Exp $
+$Id: build.xml 1 2008-01-10 18:37:05Z smoot $
+
+OpenSIMS - language translation (lingo)
+
+A typical target sequence for installing the translation files would be:
+
+	ant -v install-opensims | tee install.txt
+
+</description>
+
+
+<!-- ######################################################################
+		global properties
+     ###################################################################### -->
+
+<property
+ name="build.dir"
+ location="${basedir}/../../build"
+/>
+<import
+ file="${build.dir}/properties.xml"
+/>
+
+
+<!-- ######################################################################
+		installer tasks
+     ###################################################################### -->
+
+<target
+ name="install"
+ description="copy the language translation file to the XML lib directory"
+>
+<copy
+ file="template/lingo.xml"
+ todir="${var.lib}"
+ overwrite="true"
+/>
+</target>
+
+
+<target
+ name="install-opensims"
+ description="top-level target for installing an OpenSIMS distribution"
+ depends="install"
+/>
+
+
+</project>

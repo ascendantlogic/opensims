@@ -1,0 +1,1655 @@
+<project
+ name="keymgr"
+ default="list_keystore"
+ basedir="."
+>
+
+<!--
+@LICENSE@
+
+Mike ERWIN mikee@symbiot.com
+Lindsey SIMON lsimon@symbiot.com
+Paco NATHAN paco@symbiot.com
+ -->
+
+<description>
+$CVSId: build.xml,v 1.43 2004/11/14 16:44:08 paco Exp $
+$Id: build.xml 16 2008-04-08 16:36:17Z smoot $
+
+OpenSIMS - authentication key manager (openssl)
+
+A typical target sequence for installing key management on a new
+instance of OpenSIMS would be:
+
+	ant -v install-opensims | tee install.txt
+
+Listing the contents of the Java keystores:
+
+	ant list_truststore
+	ant list_keystore
+
+Updating a certificate which has been signed by a repository (Symbiot.NET):
+
+	ant import_repository
+
+Creating a new key pair for an AgentSDK remote agent:
+
+	mkdir /var/ssl/myagent
+	ant -Dtemp.cert=/var/ssl/myagent create_unit_keys import_unit_keys
+	# results will be added to "/var/ssl/certs" and "/var/ssl/private"
+
+</description>
+
+
+<!-- ######################################################################
+		global properties
+     ###################################################################### -->
+
+<property
+ name="build.dir"
+ location="${basedir}/../../build"
+/>
+<import
+ file="${build.dir}/properties.xml"
+/>
+
+<property
+ name="keymgr.properties"
+ location="${build.dir}/keymgr.properties"
+/>
+
+<property
+ name="opensims.java.dir"
+ location="${basedir}/../../java"
+/>
+
+<property
+ name="openssl.template"
+ location="${basedir}/template/openssl.cnf"
+/>
+<property
+ name="pkey.8"
+ value="privatekey.pkcs8"
+/>
+<property
+ name="pkey.12"
+ value="privatekey.pkcs12"
+/>
+<property
+ name="pkey.64"
+ value="privatekey.b64"
+/>
+<property
+ name="cert.12"
+ value="certificate.pkcs12"
+/>
+<property
+ name="cert.64"
+ value="certificate.b64"
+/>
+
+
+<target
+ name="load_properties"
+ description="load the properties for OpenSIMS KeyMgr"
+>
+<property
+ file="${keymgr.properties}"
+/>
+</target>
+
+
+<!-- ######################################################################
+		user interactivity tasks
+     ###################################################################### -->
+
+<!--
+ @TODO should prompt for "key.security", if the Sun "keytool" was not so incredibly ineffectual
+ -->
+<property
+ name="key.security"
+ value="no"
+/>
+
+<target
+ name="prompt_key_security"
+ description="prompt for whether to use high-security keys"
+ unless="key.security"
+>
+<input
+ addproperty="key.security"
+ defaultvalue="no"
+ validargs="yes,no"
+>
+Do you want the SSL keys handled with high security?
+</input>
+
+<condition
+ property="high.key.security"
+>
+<equals
+ arg1="${key.security}"
+ arg2="yes"
+/>
+</condition>
+</target>
+
+
+<target
+ name="prompt_domain_name"
+ description="prompt for the local Fully Qualified Domain Name (FQDN)"
+ unless="domain.name"
+>
+<input
+ addproperty="domain.name"
+ defaultvalue="${fqdn}"
+>
+What is the Fully Qualified Domain Name (FQDN) used for this cert/key?  [ default: '${fqdn}' ]
+</input>
+</target>
+
+
+<target
+ name="prompt_unit_guid"
+ description="prompt for the Server/Agent Globally Unique Identifier (GUID)"
+ unless="unit.guid"
+>
+<input
+ addproperty="unit.guid"
+ defaultvalue="000000001"
+>
+Server/Agent Globally Unique Identifier (GUID) assigned for this cert/key?  [ default: '000000001' ]
+(ignore if not grokked)
+</input>
+</target>
+
+
+<target
+ name="prompt_local_ca_pass"
+ description="prompt for a passphrase for the local CA"
+ unless="ca.pass"
+>
+<input
+ addproperty="ca.pass"
+ defaultvalue="changeit1"
+>
+Passphrase for the local Certificate Authority (CA) private key?  [ default: 'changeit1' ]
+(this one is IMPORTANT to remember and keep secured)
+</input>
+</target>
+
+
+<target
+ name="prompt_server_pass"
+ description="prompt for a passphrase for the server/agent private key"
+ unless="server.pass"
+>
+<input
+ addproperty="server.pass"
+ defaultvalue="changeit2"
+>
+Passphrase for the private key used by the server/agent?  [ default: 'changeit2' ]
+(this one is IMPORTANT to remember and keep secured)
+</input>
+</target>
+
+
+<target
+ name="prompt_country_name"
+ description="prompt for a country name"
+ unless="dname.country.name"
+>
+<input
+ addproperty="dname.country.name"
+ defaultvalue="US"
+>
+In which country is your organization located?  [ default: 'US' ]
+</input>
+</target>
+
+
+<target
+ name="prompt_province_name"
+ description="prompt for a state or province name"
+ unless="dname.province.name"
+>
+<input
+ addproperty="dname.province.name"
+ defaultvalue="Idaho"
+>
+In which state or province is your organization located?  [ default: 'Idaho' ]
+</input>
+</target>
+
+
+<target
+ name="prompt_locality_name"
+ description="prompt for a locality name"
+ unless="dname.locality.name"
+>
+<input
+ addproperty="dname.locality.name"
+ defaultvalue="Private"
+>
+In which city or locality is your organization located?  [ default: 'Private' ]
+</input>
+</target>
+
+
+<target
+ name="prompt_org_name"
+ description="prompt for an organization name"
+ unless="dname.org.name"
+>
+<input
+ addproperty="dname.org.name"
+ defaultvalue="Acme Nets, Inc."
+>
+What is the name of your organization?  [ default: 'Acme Nets, Inc.' ]
+</input>
+</target>
+
+
+<target
+ name="prompt_email_addr"
+ description="prompt for a contact email address"
+ unless="dname.email.addr"
+>
+<input
+ addproperty="dname.email.addr"
+ defaultvalue="info@example.com"
+>
+What is the email address used to contact your organization?  [ default: 'info@example.com' ]
+</input>
+</target>
+
+
+<!-- ######################################################################
+		initialization tasks
+     ###################################################################### -->
+
+<target
+ name="test_dname"
+ description="test whether the distiguishing name properties file exists (i.e., have you run this before?)"
+>
+<available
+ file="${keymgr.properties}"
+ property="keymgr.present"
+/>
+</target>
+
+
+<target
+ name="prompt_dname"
+ description="prompt for each field in the customer distinguishing name"
+ depends="prompt_country_name,prompt_province_name,prompt_locality_name,prompt_org_name,prompt_email_addr"
+ unless="keymgr.present"
+>
+<propertyfile
+ file="${keymgr.properties}"
+ comment="OpenSIMS customer distinguishing name"
+>
+<entry
+ key="dname.country.name"
+ type="string"
+ value="${dname.country.name}"
+/>
+<entry
+ key="dname.province.name"
+ type="string"
+ value="${dname.province.name}"
+/>
+<entry
+ key="dname.locality.name"
+ type="string"
+ value="${dname.locality.name}"
+/>
+<entry
+ key="dname.org.name"
+ type="string"
+ value="${dname.org.name}"
+/>
+<entry
+ key="dname.email.addr"
+ type="string"
+ value="${dname.email.addr}"
+/>
+</propertyfile>
+</target>
+
+
+<target
+ name="save_dname"
+ description="save a properties file to persist the customer distinguishing name"
+ depends="test_dname, prompt_dname"
+/>
+
+
+<target
+ name="init_serial_number"
+ description="intialize the OpenSSL serial number sequence"
+ unless="serial.number.hash"
+>
+<checksum
+ file="${keymgr.properties}"
+ property="serial.number.hash"
+/>
+</target>
+
+
+<target
+ name="init"
+ description="prompt for dname fields, initialize the directory layout"
+ depends="load_properties,save_dname,init_serial_number"
+ unless="cert.installed"
+>
+<delete
+ dir="${ca.dir}"
+/>
+
+<mkdir
+ dir="${ca.dir}"
+/>
+<mkdir
+ dir="${ca.dir}/certs"
+/>
+<mkdir
+ dir="${ca.dir}/crl"
+/>
+<mkdir
+ dir="${ca.dir}/newcerts"
+/>
+<mkdir
+ dir="${ca.dir}/private"
+/>
+
+<chmod
+ file="${ca.dir}"
+ type="dir"
+ perm="0755"
+/>
+<chmod
+ file="${ca.dir}/certs"
+ type="dir"
+ perm="0755"
+/>
+<chmod
+ file="${ca.dir}/crl"
+ type="dir"
+ perm="0755"
+/>
+<chmod
+ file="${ca.dir}/newcerts"
+ type="dir"
+ perm="0755"
+/>
+<chmod
+ file="${ca.dir}/private"
+ type="dir"
+ perm="0750"
+/>
+
+<concat
+ destfile="${ca.dir}/serial"
+ append="no"
+>${serial.number.hash}
+</concat>
+<touch
+ file="${ca.dir}/index.txt"
+/>
+<touch
+ file="${ca.key}"
+/>
+</target>
+
+
+<target
+ name="config"
+ description="build an openssl config file with the proper distinguishing names"
+ depends="load_properties,prompt_key_security,prompt_domain_name,prompt_unit_guid"
+>
+<loadfile
+ property="cnf.template"
+ srcFile="${openssl.template}"
+/>
+<delete
+ file="${ca.dir}/local_openssl.cnf"
+/>
+
+<xslt
+ in="${basedir}/build.xml"
+ out="${ca.dir}/local_openssl.cnf"
+ style="template/local_openssl.xsl"
+ force="true"
+ reloadstylesheet="true"
+>
+<param
+ name="cnf_template"
+ expression="${cnf.template}"
+/>
+<param
+ name="build_tag"
+ expression="${build.tag}"
+/>
+<param
+ name="unit_guid"
+ expression="${unit.guid}"
+/>
+<param
+ name="domain_name"
+ expression="${domain.name}"
+/>
+<param
+ name="dname_country_name"
+ expression="${dname.country.name}"
+/>
+<param
+ name="dname_province_name"
+ expression="${dname.province.name}"
+/>
+<param
+ name="dname_locality_name"
+ expression="${dname.locality.name}"
+/>
+<param
+ name="dname_org_name"
+ expression="${dname.org.name}"
+/>
+<param
+ name="dname_email_addr"
+ expression="${dname.email.addr}"
+/>
+</xslt>
+</target>
+
+
+<target
+ name="import_ca"
+ description="import the CA from an existing file"
+>
+<!--
+@TODO provide for file import
+
+#if ($FILE) {
+#    cp_pem($FILE, "${ca.key}", "PRIVATE");
+#    cp_pem($FILE, "${ca.cert}", "CERTIFICATE");
+#}
+
+ -->
+</target>
+
+
+<target
+ name="create_local_ca"
+ description="make the local root CA certificate, then self-sign"
+ depends="config,prompt_local_ca_pass,init_serial_number"
+ unless="cert.installed"
+>
+<exec
+ dir="${ca.dir}"
+ executable="${openssl}"
+>
+<arg
+ value="req"
+/>
+<arg
+ value="-config"
+/>
+<arg
+ value="${ca.dir}/local_openssl.cnf"
+/>
+<arg
+ value="-new"
+/>
+<arg
+ value="-x509"
+/>
+<arg
+ value="-passout"
+/>
+<arg
+ value="pass:'${ca.pass}'"
+/>
+<arg
+ value="-keyout"
+/>
+<arg
+ value="${ca.key}"
+/>
+<arg
+ value="-out"
+/>
+<arg
+ value="${ca.cert}"
+/>
+<arg
+ value="-days"
+/>
+<arg
+ value="3650"
+/>
+<arg
+ value="-set_serial"
+/>
+<arg
+ value="0x01${serial.number.hash}"
+/>
+</exec>
+</target>
+
+
+<!-- ######################################################################
+		Java truststore / keystore tasks
+     ###################################################################### -->
+
+<target
+ name="create_stores"
+ description="add the created CA plus root CAs to the Java truststore / keystore"
+ depends="load_properties"
+ unless="cert.installed"
+>
+<copy
+ file="template/${truststore.file}"
+ tofile="${truststore}"
+/>
+<chmod
+ file="${truststore}"
+ type="file"
+ perm="0644"
+/>
+
+<antcall
+ target="add_truststore"
+>
+<param
+ name="this.cert.alias"
+ value="RootCA"
+/>
+<param
+ name="this.cert.file"
+ value="${ca.cert}"
+/>
+</antcall>
+
+<antcall
+ target="add_keystore"
+>
+<param
+ name="this.cert.alias"
+ value="RootCA"
+/>
+<param
+ name="this.cert.file"
+ value="${ca.cert}"
+/>
+<param
+ name="this.key.pass"
+ value="${keystore.pass}"
+/>
+</antcall>
+
+<copy
+ file="template/${repository.cert.file}"
+ tofile="${repository.cert}"
+/>
+<chmod
+ file="${repository.cert}"
+ type="file"
+ perm="0600"
+/>
+
+<antcall
+ target="add_truststore"
+>
+<param
+ name="this.cert.alias"
+ value="SymbiotNetCA"
+/>
+<param
+ name="this.cert.file"
+ value="${repository.cert}"
+/>
+</antcall>
+
+<antcall
+ target="add_keystore"
+>
+<param
+ name="this.cert.alias"
+ value="SymbiotNetCA"
+/>
+<param
+ name="this.cert.file"
+ value="${repository.cert}"
+/>
+<param
+ name="this.key.pass"
+ value="${keystore.pass}"
+/>
+</antcall>
+</target>
+
+
+<target
+ name="add_truststore"
+ description="add the indicated cert into the Java truststore"
+>
+<echo
+ message="adding ${this.cert.alias} to the Java truststore"
+/>
+
+<exec
+ dir="${ca.dir}"
+ executable="${java.home}/bin/keytool"
+>
+<arg
+ value="-import"
+/>
+<arg
+ value="-v"
+/>
+<arg
+ value="-noprompt"
+/>
+<arg
+ value="-trustcacerts"
+/>
+<arg
+ value="-alias"
+/>
+<arg
+ value="${this.cert.alias}"
+/>
+<arg
+ value="-file"
+/>
+<arg
+ value="${this.cert.file}"
+/>
+<arg
+ value="-keystore"
+/>
+<arg
+ value="${truststore.file}"
+/>
+<arg
+ value="-storepass"
+/>
+<arg
+ value="${truststore.pass}"
+/>
+</exec>
+</target>
+
+
+<target
+ name="add_keystore"
+ description="add the indicated cert into the Java keystore"
+>
+<echo
+ message="adding ${this.cert.alias} to the Java keystore"
+/>
+
+<exec
+ dir="${ca.dir}" 
+ executable="${java.home}/bin/keytool"
+>
+<arg
+ value="-import"
+/>
+<arg
+ value="-v"
+/>
+<arg
+ value="-noprompt"
+/>
+<arg
+ value="-trustcacerts"
+/>
+<arg
+ value="-alias"
+/>
+<arg
+ value="${this.cert.alias}"
+/>
+<arg
+ value="-file"
+/>
+<arg
+ value="${this.cert.file}"
+/>
+<arg
+ value="-keystore"
+/>
+<arg
+ value="${keystore.file}"
+/>
+<arg
+ value="-storepass"
+/>
+<arg
+ value="${keystore.pass}"
+/>
+<arg
+ value="-keypass"
+/>
+<arg
+ value="${this.key.pass}"
+/>
+</exec>
+</target>
+
+
+<target
+ name="list_truststore"
+ description="list the certs in the Java truststore"
+ depends="load_properties"
+>
+<exec
+ dir="${ca.dir}" 
+ executable="${java.home}/bin/keytool"
+>
+<arg
+ value="-list"
+/>
+<arg
+ value="-v"
+/>
+<arg
+ value="-keystore"
+/>
+<arg
+ value="${truststore.file}"
+/>
+<arg
+ value="-storepass"
+/>
+<arg
+ value="${truststore.pass}"
+/>
+</exec>
+</target>
+
+
+<target
+ name="list_keystore"
+ description="list the certs in the Java keystore"
+ depends="load_properties"
+>
+<exec
+ dir="${ca.dir}" 
+ executable="${java.home}/bin/keytool"
+>
+<arg
+ value="-list"
+/>
+<arg
+ value="-v"
+/>
+<arg
+ value="-keystore"
+/>
+<arg
+ value="${keystore.file}"
+/>
+<arg
+ value="-storepass"
+/>
+<arg
+ value="${keystore.pass}"
+/>
+</exec>
+</target>
+
+
+<!--
+ @TODO restore remote agent keys from the stores
+ @TODO remove remote agent keys from the stores
+ -->
+
+
+<!-- ######################################################################
+		server/agent key tasks
+     ###################################################################### -->
+
+<target
+ name="mkdir_temp_cert"
+ description="create a temporary directory for constructing another key pair"
+ unless="temp.cert"
+>
+<tempfile
+ property="temp.cert.base"
+ destdir="${ca.dir}"
+ prefix="cert"
+/>
+<basename
+ property="temp.cert"
+ file="${temp.cert.base}"
+/>
+<mkdir
+ dir="${ca.dir}/${temp.cert}"
+/>
+<chmod
+ file="${ca.dir}/${temp.cert}"
+ type="dir"
+ perm="0750"
+/>
+</target>
+
+
+<target
+ name="gen_keys"
+ description="create the server/agent keys"
+ depends="config,mkdir_temp_cert"
+>
+<!--
+ @TODO should use "prompt_server_pass", if the Sun "keytool" was not so incredibly ineffectual
+ -->
+
+<exec
+ dir="${ca.dir}" 
+ executable="${java.home}/bin/keytool"
+>
+<arg
+ value="-delete"
+/>
+<arg
+ value="-v"
+/>
+<arg
+ value="-alias"
+/>
+<arg
+ value="${domain.name}"
+/>
+<arg
+ value="-keystore"
+/>
+<arg
+ value="${keystore}"
+/>
+<arg
+ value="-storepass"
+/>
+<arg
+ value="${keystore.pass}"
+/>
+</exec>
+
+<genkey
+ alias="${domain.name}"
+ keystore="${keystore}"
+ storepass="${keystore.pass}"
+ storetype="JKS"
+ keypass="${keystore.pass}"
+ keyalg="RSA"
+ validity="365"
+ verbose="true"
+>
+<dname>
+<param
+ name="CN"
+ value="${domain.name}"
+/>
+<param
+ name="OU"
+ value="${build.tag} ${unit.guid}"
+/>
+<param
+ name="O"
+ value="${dname.org.name}"
+/>
+<param
+ name="C"
+ value="${dname.country.name}"
+/>
+</dname>
+</genkey>
+
+<exec
+ dir="${ca.dir}" 
+ executable="${java.home}/bin/keytool"
+>
+<arg
+ value="-certreq"
+/>
+<arg
+ value="-v"
+/>
+<arg
+ value="-alias"
+/>
+<arg
+ value="${domain.name}"
+/>
+<arg
+ value="-file"
+/>
+<arg
+ value="${temp.cert}/newreq.pem"
+/>
+<arg
+ value="-keystore"
+/>
+<arg
+ value="${keystore}"
+/>
+<arg
+ value="-storepass"
+/>
+<arg
+ value="${keystore.pass}"
+/>
+<arg
+ value="-keypass"
+/>
+<arg
+ value="${keystore.pass}"
+/>
+</exec>
+</target>
+
+
+<target
+ name="sign_keys"
+ description="sign the server/agent keys"
+ depends="prompt_local_ca_pass,mkdir_temp_cert"
+>
+<exec
+ dir="${ca.dir}"
+ executable="${openssl}"
+>
+<arg
+ value="ca"
+/>
+<arg
+ value="-config"
+/>
+<arg
+ value="${ca.dir}/local_openssl.cnf"
+/>
+<arg
+ value="-batch"
+/>
+<arg
+ value="-policy"
+/>
+<arg
+ value="policy_anything"
+/>
+<arg
+ value="-out"
+/>
+<arg
+ value="${temp.cert}/newcert.pem"
+/>
+<arg
+ value="-in"
+/>
+<arg
+ value="${temp.cert}/newreq.pem"
+/>
+<arg
+ value="-passin"
+/>
+<arg
+ value="pass:'${ca.pass}'"
+/>
+</exec>
+
+<move
+ file="${ca.dir}/${temp.cert}/newreq.pem"
+ tofile="${ca.dir}/${temp.cert}/${domain.name}.req.pem"
+/>
+<move
+ file="${ca.dir}/${temp.cert}/newcert.pem"
+ tofile="${ca.dir}/${temp.cert}/${domain.name}.cert.pem"
+/>
+
+<exec
+ dir="${ca.dir}"
+ executable="${openssl}"
+ output="${ca.dir}/certs/${domain.name}.x509.pem"
+>
+<arg
+ value="x509"
+/>
+<arg
+ value="-in"
+/>
+<arg
+ value="${temp.cert}/${domain.name}.cert.pem"
+/>
+</exec>
+</target>
+
+
+<target
+ name="export_keys"
+ description="dump the application server keys to a b64 format for Java"
+ depends="mkdir_temp_cert"
+>
+<exec
+ dir="${ca.dir}" 
+ executable="${java.home}/bin/keytool"
+>
+<arg
+ value="-export"
+/>
+<arg
+ value="-v"
+/>
+<arg
+ value="-rfc"
+/>
+<arg
+ value="-alias"
+/>
+<arg
+ value="${domain.name}"
+/>
+<arg
+ value="-file"
+/>
+<arg
+ value="${temp.cert}/${cert.64}"
+/>
+<arg
+ value="-keystore"
+/>
+<arg
+ value="${keystore.file}"
+/>
+<arg
+ value="-storepass"
+/>
+<arg
+ value="${keystore.pass}"
+/>
+</exec>
+</target>
+
+
+<target
+ name="java_keys"
+ description="Java tools to dump the application server keys"
+ depends="mkdir_temp_cert"
+>
+<javac
+ deprecation="yes"
+ verbose="yes"
+ debug="on"
+ sourcepath=""
+ destdir="${opensims.java.dir}"
+ srcdir="${opensims.java.dir}"
+ includes="org/opensims/crypto/PrivateKeyDumper.java"
+/>
+
+<java
+ classname="org.opensims.crypto.PrivateKeyDumper"
+ classpath="${opensims.java.dir}"
+ failonerror="true"
+>
+<arg
+ value="${domain.name}"
+/>
+<arg
+ value="${keystore}"
+/>
+<arg
+ value="${keystore.pass}"
+/>
+<arg
+ value="${keystore.pass}"
+/>
+<arg
+ value="${ca.dir}/${temp.cert}/${pkey.8}"
+/>
+</java>
+</target>
+
+
+<target
+ name="construct_keys"
+ description="construct the application server keys in a format which can be signed by the repository"
+ depends="mkdir_temp_cert"
+>
+<exec
+ dir="${ca.dir}"
+ executable="${openssl}"
+>
+<arg
+ value="enc"
+/>
+<arg
+ value="-in"
+/>
+<arg
+ value="${temp.cert}/${pkey.8}"
+/>
+<arg
+ value="-out"
+/>
+<arg
+ value="${temp.cert}/${pkey.64}.enc"
+/>
+<arg
+ value="-a"
+/>
+</exec>
+
+<concat
+ destfile="${ca.dir}/${temp.cert}/${pkey.64}"
+ append="no"
+>
+<header>-----BEGIN PRIVATE KEY-----
+</header>
+<fileset
+ file="${ca.dir}/${temp.cert}/${pkey.64}.enc"
+/>
+<footer>-----END PRIVATE KEY-----
+</footer>
+</concat>
+
+<exec
+ dir="${ca.dir}"
+ executable="${openssl}"
+>
+<arg
+ value="pkcs12"
+/>
+<arg
+ value="-export"
+/>
+<arg
+ value="-inkey"
+/>
+<arg
+ value="${temp.cert}/${pkey.64}"
+/>
+<arg
+ value="-in"
+/>
+<arg
+ value="${temp.cert}/${cert.64}"
+/>
+<arg
+ value="-out"
+/>
+<arg
+ value="${temp.cert}/${cert.12}"
+/>
+<arg
+ value="-passin"
+/>
+<arg
+ value="pass:${keystore.pass}"
+/>
+<arg
+ value="-passout"
+/>
+<arg
+ value="pass:${keystore.pass}"
+/>
+<arg
+ value="-password"
+/>
+<arg
+ value="pass:${keystore.pass}"
+/>
+</exec>
+
+<exec
+ dir="${ca.dir}"
+ executable="${openssl}"
+>
+<arg
+ value="pkcs12"
+/>
+<arg
+ value="-nocerts"
+/>
+<arg
+ value="-in"
+/>
+<arg
+ value="${temp.cert}/${cert.12}"
+/>
+<arg
+ value="-out"
+/>
+<arg
+ value="${temp.cert}/${pkey.12}"
+/>
+<arg
+ value="-passin"
+/>
+<arg
+ value="pass:${keystore.pass}"
+/>
+<arg
+ value="-passout"
+/>
+<arg
+ value="pass:${keystore.pass}"
+/>
+<arg
+ value="-password"
+/>
+<arg
+ value="pass:${keystore.pass}"
+/>
+</exec>
+
+<exec
+ dir="${ca.dir}"
+ executable="sed"
+ output="${ca.dir}/${temp.cert}/${domain.name}.key_secure.pem"
+>
+<arg
+ value="1,3d"
+/>
+<arg
+ value="${temp.cert}/${pkey.12}"
+/>
+</exec>
+
+<copy
+ file="${ca.dir}/${temp.cert}/${domain.name}.key_secure.pem"
+ todir="${ca.dir}/private"
+/>
+<chmod
+ file="${ca.dir}/private/${domain.name}.key_secure.pem"
+ type="file"
+ perm="0600"
+/>
+</target>
+
+
+<target
+ name="save_secure_keys"
+ description="save the secure version of the server/agent keys"
+ depends="mkdir_temp_cert"
+ if="high.key.security"
+>
+<concat
+ destfile="${ca.dir}/certs/${domain.name}.pem"
+ append="no"
+>
+<fileset
+ file="${ca.dir}/${temp.cert}/${domain.name}.cert.pem"
+/>
+<fileset
+ file="${ca.dir}/${temp.cert}/${domain.name}.key_secure.pem"
+/>
+</concat>
+
+<copy
+ file="${ca.dir}/${temp.cert}/${domain.name}.key_secure.pem"
+ todir="${ca.dir}/private"
+/>
+<chmod
+ file="${ca.dir}/private/${domain.name}.key_secure.pem"
+ type="file"
+ perm="0600"
+/>
+</target>
+
+
+<target
+ name="save_stripped_keys"
+ description="save the stripped version of the server/agent keys"
+ depends="mkdir_temp_cert"
+ unless="high.key.security"
+>
+<exec
+ dir="${ca.dir}"
+ executable="${openssl}"
+>
+<arg
+ value="rsa"
+/>
+<arg
+ value="-in"
+/>
+<arg
+ value="${temp.cert}/${domain.name}.key_secure.pem"
+/>
+<arg
+ value="-out"
+/>
+<arg
+ value="${temp.cert}/${domain.name}.key_stripped.pem"
+/>
+<arg
+ value="-passin"
+/>
+<arg
+ value="pass:${keystore.pass}"
+/>
+</exec>
+
+<concat
+ destfile="${ca.dir}/certs/${domain.name}.pem"
+ append="no"
+>
+<fileset
+ file="${ca.dir}/${temp.cert}/${domain.name}.cert.pem"
+/>
+<fileset
+ file="${ca.dir}/${temp.cert}/${domain.name}.key_stripped.pem"
+/>
+</concat>
+
+<copy
+ file="${ca.dir}/${temp.cert}/${domain.name}.key_stripped.pem"
+ todir="${ca.dir}/private"
+/>
+<chmod
+ file="${ca.dir}/private/${domain.name}.key_stripped.pem"
+ type="file"
+ perm="0600"
+/>
+</target>
+
+
+<target
+ name="create_unit_keys"
+ description="create and verify the server/agent keys"
+ depends="gen_keys,sign_keys,export_keys,java_keys,construct_keys,save_secure_keys,save_stripped_keys"
+ unless="cert.installed"
+>
+<exec
+ dir="${ca.dir}"
+ executable="${openssl}"
+ failonerror="true"
+>
+<arg
+ value="verify"
+/>
+<arg
+ value="-CAfile"
+/>
+<arg
+ value="${ca.cert}"
+/>
+<arg
+ value="${ca.dir}/certs/${domain.name}.pem"
+/>
+</exec>
+
+<copy
+ file="${ca.dir}/${temp.cert}/${domain.name}.req.pem"
+ todir="${var.lib}"
+/>
+<delete
+ dir="${ca.dir}/${temp.cert}"
+/>
+</target>
+
+
+<target
+ name="import_unit_keys"
+ description="import keys into the keystore - by default, X.509 for the application server"
+ depends="load_properties,prompt_domain_name"
+ unless="cert.installed"
+>
+<!--
+ @TODO should use "prompt_server_pass", if the Sun "keytool" was not so incredibly ineffectual
+ -->
+
+<!--
+for inexplicable reasons, running this target hangs the session if
+called from within another target ... probably due to another bad
+memory stick on the Fedora box.
+
+so we make it a separate target.
+ -->
+
+<property
+ name="import.cert.file"
+ value="certs/${domain.name}.x509.pem"
+/>
+
+<antcall
+ target="add_keystore"
+>
+<param
+ name="this.cert.alias"
+ value="${domain.name}"
+/>
+<param
+ name="this.cert.file"
+ value="${import.cert.file}"
+/>
+<param
+ name="this.key.pass"
+ value="${keystore.pass}"
+/>
+</antcall>
+</target>
+
+
+<target
+ name="install_server_keys"
+ description="link the OpenSIMS application server keys for use by the AgentSDK"
+ depends="load_properties,prompt_domain_name"
+ unless="cert.installed"
+>
+<delete
+ dir="${config.basedir}/certs"
+ verbose="true"
+/>
+<mkdir
+ dir="${config.basedir}/certs"
+/>
+<chmod
+ dir="${config.basedir}/certs"
+ type="dir"
+ perm="0755"
+/>
+<chown
+ file="${config.basedir}/certs"
+ type="dir"
+ owner="${super.user}"
+/>
+<chgrp
+ file="${config.basedir}/certs"
+ type="dir"
+ group="${super.group}"
+/>
+
+<symlink
+ link="${config.basedir}/certs/cacert.pem"
+ resource="${ca.cert}"
+ overwrite="true"
+/>
+<chmod
+ file="${ca.cert}"
+ type="file"
+ perm="0600"
+/>
+
+<symlink
+ link="${config.basedir}/certs/agent.pem"
+ resource="${ca.dir}/certs/${domain.name}.pem"
+ overwrite="true"
+/>
+<chmod
+ file="${ca.dir}/certs/${domain.name}.pem"
+ type="file"
+ perm="0600"
+/>
+</target>
+
+
+<target
+ name="publish"
+ description="publish the server cert"
+ unless="cert.installed"
+>
+<copy
+ file="${ca.dir}/cacert.pem"
+ tofile="${tomcat.webapps}/${webapp.name}/appliance.crt"
+ overwrite="true"
+ failonerror="false"
+/>
+<chmod
+ file="${tomcat.webapps}/${webapp.name}/appliance.crt"
+ type="file"
+ perm="0644"
+/>
+<chgrp
+ file="${tomcat.webapps}/${webapp.name}/appliance.crt"
+ type="file"
+ group="${webapp.group}"
+/>
+
+<copy
+ file="${repository.cert}"
+ tofile="${tomcat.webapps}/${webapp.name}/repository.crt"
+ overwrite="true"
+ failonerror="false"
+/>
+<chmod
+ file="${tomcat.webapps}/${webapp.name}/repository.crt"
+ type="file"
+ perm="0644"
+/>
+<chgrp
+ file="${tomcat.webapps}/${webapp.name}/repository.crt"
+ type="file"
+ group="${webapp.group}"
+/>
+</target>
+
+
+<target
+ name="install-opensims"
+ description="top-level target for installing an OpenSIMS distribution"
+ depends="check_cert"
+ unless="cert.installed"
+>
+<ant
+  target="install-opensims-sub"
+/>
+</target>
+
+<target
+ name="install-opensims-sub"
+ description="top-level target for installing an OpenSIMS distribution"
+ depends="init,create_local_ca,create_stores,create_unit_keys,import_unit_keys,install_server_keys,publish"
+/>
+
+<target
+ name="check_cert"
+ description="Check for installed certificate"
+ depends="files_available"
+ if="files.available"
+>
+<uptodate
+ srcfile="${ca.dir}/cacert.pem"
+ targetfile="${tomcat.webapps}/${webapp.name}/appliance.crt"
+ property="cert.installed"
+/>
+<echo message="${cert.installed}"/>
+</target>
+
+<target
+ name="files_available"
+ description="Check if some files exist"
+>
+<condition property="files.available">
+ <and>
+  <available file="${ca.dir}/cacert.pem"/>
+  <available file="${tomcat.webapps}/${webapp.name}/appliance.crt"/>
+ </and>
+</condition>
+</target>
+
+<!-- ######################################################################
+		repository tasks
+     ###################################################################### -->
+
+<target
+ name="import_repository"
+ description="import an OpenSIMS cert which has been signed by the repository"
+ depends="load_properties,prompt_domain_name,mkdir_temp_cert"
+>
+<copy
+ file="${var.lib}/${domain.name}.signed.pem"
+ tofile="${ca.dir}/${temp.cert}/fixor.pem"
+/>
+<fixcrlf
+ srcdir="${ca.dir}/${temp.cert}"
+ includes="fixor.pem"
+/>
+
+<exec
+ dir="${ca.dir}/${temp.cert}"
+ executable="sed"
+ output="${ca.dir}/${temp.cert}/import.pem"
+>
+<arg
+ value="-ne"
+/>
+<arg
+ value="/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p"
+/>
+<arg
+ value="fixor.pem"
+/>
+</exec>
+
+<concat
+ destfile="${ca.dir}/certs/${domain.name}.signed.pem"
+ append="no"
+>
+<fileset
+ file="${ca.dir}/${temp.cert}/fixor.pem"
+/>
+<fileset
+ file="${ca.dir}/private/${domain.name}.key_stripped.pem"
+/>
+</concat>
+<chmod
+ file="${ca.dir}/certs/${domain.name}.signed.pem"
+ type="file"
+ perm="0600"
+/>
+
+<antcall
+ target="add_keystore"
+>
+<param
+ name="this.cert.alias"
+ value="${domain.name}"
+/>
+<param
+ name="this.cert.file"
+ value="${ca.dir}/${temp.cert}/import.pem"
+/>
+<param
+ name="this.key.pass"
+ value="${keystore.pass}"
+/>
+</antcall>
+
+<symlink
+ link="${config.basedir}/certs/cacert.pem"
+ resource="${repository.cert}"
+ overwrite="true"
+/>
+<symlink
+ link="${config.basedir}/certs/agent.pem"
+ resource="${ca.dir}/certs/${domain.name}.signed.pem"
+ overwrite="true"
+/>
+
+<delete
+ dir="${ca.dir}/${temp.cert}"
+/>
+</target>
+
+
+</project>

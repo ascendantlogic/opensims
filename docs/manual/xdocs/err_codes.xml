@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<properties>
+<title>Error Codes</title>
+<author
+ email="paco@symbiot.com"
+>Paco NATHAN</author>
+</properties>
+
+<body>
+
+<section
+ name="AgentSDK - Server Status Response Codes"
+>
+<p>
+
+The <i>AgentSDK</i> implements a client/server communication with J2EE
+servlets via the HTTP/1.1 protocol over SSL.
+
+Definitive documentation for the response status codes used for
+HTTP-based resources is specified in RFC 2616,
+
+<a
+ href="http://www.faqs.org/rfcs/rfc2616.html"
+ target="_blank"
+>HTTP/1.1</a>,
+
+particularly in sections 6 and b10.
+
+</p>
+<p>
+
+The status codes which the server will use to respond to agent
+requests include the following:
+
+</p>
+<table
+ border="0"
+ cellpadding="2"
+>
+
+<tr><td>200</td><th align="left">SC_OK</th><td><code>"OK"</code></td></tr>
+<tr><td colspan="3">
+This indicates normal operation, i.e. the agent keeps going.
+</td></tr>
+
+<tr><td>202</td><th align="left">SC_ACCEPTED</th><td><code>"agent is not provisioned yet"</code></td></tr>
+<tr><td colspan="3">
+The agent's login was received, and appears to be in the appropriate
+format, but there is not provisioning/configuration authorized for
+this agent yet.  The agent should wait for a while and then try again.
+(See RFC 2616, section 10.2.3).
+</td></tr>
+
+<tr><td>400</td><th align="left">SC_BAD_REQUEST</th><td><code>"agent protocol error"</code></td></tr>
+<tr><td colspan="3">
+There was a problem with the request XML format or login data
+provided, such that the request cannot be understood within the
+context of the agent protocol.  Kill the agent/plugin causing the
+problems.  (See RFC 2616, section 10.4.1).
+</td></tr>
+
+<tr><td>599</td><th align="left">SC_SERVER_ERROR</th><td><code>"database is unavailable"</code></td></tr>
+<tr><td colspan="3">
+The database or some other critical system on the server side is not
+available.  The agent should wait for a while and then try again.
+(See RFC 2616, section 10.5)
+</td></tr>
+
+</table>
+<p>
+
+There could be other cases where a SC_CONFLICT (409) may be used, for
+instance if the server detects something untoward in the values of
+app_signature, mac_addr, guid, platform, etc.
+
+This is still TO BE DETERMINED.
+
+</p>
+</section>
+
+<section
+ name="AgentSDK - Library/Agent/Plugin Error Codes"
+>
+<table
+ border="0"
+ cellpadding="2"
+>
+
+<tr><td><code>kErrorLocalPreferenceNotFound</code></td><td>-23101</td><th>libsymbiot</th></tr>
+<tr><td align="left" colspan="3">
+	At application launch, during library initialization
+<br/>
+	Local preferences file not found
+</td>
+</tr>
+	
+<tr><td><code>kErrorLocalPreferenceCorrupt</code></td><td>-23102</td><th>libsymbiot</th></tr>
+<tr><td align="left" colspan="3">
+	At application launch, during library initialization
+<br/>
+	Local preferences file corrupt
+</td>
+</tr>
+
+<tr><td><code>kErrorLocalPreferenceVersionMismatch</code></td><td>-23103</td><th>libsymbiot</th></tr>
+<tr><td align="left" colspan="3">
+	At application launch, during library initialization
+<br/>
+	Local preference version mismatch
+</td>
+</tr>
+
+<tr><td><code>kErrorLocalPreferenceNotLoaded</code></td><td>-23104</td><th>libsymbiot</th></tr>
+<tr><td align="left" colspan="3">
+	Whenever parts of the library need preference data that should already be present; this should never occur
+<br/>
+	Local preferences not loaded
+</td>
+</tr>
+
+<tr><td><code>kErrorLocalPreferencesPermissionsBad</code></td><td>-23105</td><th>libsymbiot</th></tr>
+<tr><td align="left" colspan="3">
+	At application launch, during library initialization
+<br/>
+	Permissions on local preferences file incorrect
+</td>
+</tr>
+
+<tr><td><code>kErrorCertificateFilePermissionsBad</code></td><td>-23151</td><th>libsymbiot</th></tr>
+<tr><td align="left" colspan="3">
+	During connection to server
+<br/>
+	Permissions on certificate file incorrect
+</td>
+</tr>
+
+<tr><td><code>kErrorNotConnectedToServer</code></td><td>-23201</td><th>libsymbiot</th></tr>
+<tr><td align="left" colspan="3">
+	Whenever we're supposed to be connected to the server
+<br/>
+	Not connected to server
+</td>
+</tr>
+
+<tr><td><code>kErrorBadServerResponse</code></td><td>-23202</td><th>libsymbiot</th></tr>
+<tr><td align="left" colspan="3">
+	When checking the HTTP response code in the server's reply to one of our messages
+<br/>
+	The server replied with an inappropriate HTTP response code
+</td>
+</tr>
+
+<tr><td><code>kErrorAgentNotProvisioned</code></td><td>-23203</td><th>libsymbiot</th></tr>
+<tr><td align="left" colspan="3">
+	During login, after receiving the server's reply
+<br/>
+	Agent is not provisioned to operate
+</td>
+</tr>
+
+<tr><td><code>kErrorDBUnavailable</code></td><td>-23204</td><th>libsymbiot</th></tr>
+<tr><td align="left" colspan="3">
+	When processing any server reply to one of our messages
+<br/>
+	Server appliance database is unavailable
+</td>
+</tr>
+
+<tr><td><code>kErrorServerUnavailable</code></td><td>-23205</td><th>libsymbiot</th></tr>
+<tr><td align="left" colspan="3">
+	When processing any server reply to one of our messages
+<br/>
+	Server appliance is unavailable
+</td>
+</tr>
+
+<tr><td><code>kErrorServerCommunicationTimeout</code></td><td>-23206</td><th>libsymbiot</th></tr>
+<tr><td align="left" colspan="3">
+	When trying to send a message to the server
+<br/>
+	Timeout while communicating with server
+</td>
+</tr>
+
+<tr><td><code>kErrorNoPreferences</code></td><td>-24101</td><th>symagent</th></tr>
+<tr><td align="left" colspan="3">
+	When processing reply to a LOGIN message
+<br/>
+	No tasks found in server-based config
+</td>
+</tr>
+
+<tr><td><code>kErrorRequiresSuperUserPerms</code></td><td>-24102</td><th>symagent</th></tr>
+<tr><td align="left" colspan="3">
+	During symagent launch
+<br/>
+	Agent requires super-user permissions (user NNN made the attempt)
+</td>
+</tr>
+
+<tr><td><code>kErrorNoPluginsFound</code></td><td>-24103</td><th>symagent</th></tr>
+<tr><td align="left" colspan="3">
+	<i>not used</i>
+</td>
+</tr>
+
+<tr><td><code>kErrorPluginFunctionMissing</code></td><td>-24104</td><th>symagent</th></tr>
+<tr><td align="left" colspan="3">
+	During symagent launch, when trying to fully load a plugin module
+<br/>
+	AgentName() API function not implemented in plugin at '&lt;path&gt;'
+<br/>
+	AgentVersion() API function not implemented in plugin at '&lt;path&gt;'
+<br/>
+	AgentEnvironment() API function not implemented in plugin at '&lt;path&gt;'
+<br/>
+	AgentDescription() API function not implemented in plugin at '&lt;path&gt;'
+<br/>
+	AgentInit() API function not implemented in plugin at '&lt;path&gt;'
+<br/>
+	AgentRun() API function not implemented in plugin at '&lt;path&gt;'
+<br/>
+	AgentStop() API function not implemented in plugin at '&lt;path&gt;'
+</td>
+</tr>
+
+<tr><td><code>kErrorPluginDirPermissionsBad</code></td><td>-24105</td><th>symagent</th></tr>
+<tr><td align="left" colspan="3">
+	During symagent launch
+<br/>
+	Plugin directory '&lt;path&gt;' does not have the correct permissions
+</td>
+</tr>
+
+<tr><td><code>kErrorPluginPermissionsBad</code></td><td>-24106</td><th>symagent</th></tr>
+<tr><td align="left" colspan="3">
+	<i>not used</i>
+</td>
+</tr>
+
+<tr><td><code>kErrorNetworkDeviceNotSpecified</code></td><td>-24201</td><th>mac-lookup</th></tr>
+<tr><td align="left" colspan="3">
+	During initialization of the mac-lookup plugin
+<br/>
+	Network interface not defined
+</td>
+</tr>
+
+<tr><td><code>kErrorScanTargetNotSpecified</code></td><td>-24202</td><th>mac-lookup</th></tr>
+<tr><td align="left" colspan="3">
+	During initialization of the mac-lookup plugin
+<br/>
+	Scan target not defined
+</td>
+</tr>
+	
+<tr><td><code>kErrorInvalidScanTarget</code></td><td>-24203</td><th>mac-lookup</th></tr>
+<tr><td align="left" colspan="3">
+	During initialization of the mac-lookup plugin
+<br/>
+	Scan target '&lt;target&gt;' invalid
+</td>
+</tr>
+
+<tr><td><code>kErrorUnableToObtainLocalIPAddress</code></td><td>-24204</td><th>mac-lookup</th></tr>
+<tr><td align="left" colspan="3">
+	During initialization of the mac-lookup plugin
+<br/>
+	Unable to determine IP address used by device '&lt;network interface&gt;'
+</td>
+</tr>
+
+<tr><td><code>kErrorUnableToObtainLocalNetMask</code></td><td>-24205</td><th>mac-lookup</th></tr>
+<tr><td align="left" colspan="3">
+	During initialization of the mac-lookup plugin
+<br/>
+	Unable to determine network mask used by device '&lt;network interface&gt;'
+</td>
+</tr>
+
+<tr><td><code>kErrorPCAPLibraryError</code></td><td>-24501</td><th>network</th></tr>
+<tr><td align="left" colspan="3">
+	Either initialization or runtime errors generated by libpcap
+<br/>
+	<i>variable error messages, all coming from libpcap</i>
+</td>
+</tr>
+
+<tr><td><code>kErrorPCAPInterfaceNotOpen</code></td><td>-24502</td><th>network</th></tr>
+<tr><td align="left" colspan="3">
+	Attempt to use libpcap without first opening an internal interface; should never be seen
+<br/>
+	A PCAP interface has not been opened
+</td>
+</tr>
+
+<tr><td><code>kErrorExternalPacketListNotProvided</code></td><td>-24503</td><th>network</th></tr>
+<tr><td align="left" colspan="3">
+	While attempting to sniff the wire via libpcap; should never be seen
+<br/>
+	External packet list not provided
+</td>
+</tr>
+
+<tr><td><code>kErrorNoPreferences</code></td><td>-24101</td><th>processes</th></tr>
+<tr><td align="left" colspan="3">
+	During initialization of processes plugin
+<br/>
+	No tasks found in server-based config
+</td>
+</tr>
+
+<tr><td><code>kErrorKVMReadFailed</code></td><td>-24102</td><th>processes</th></tr>
+<tr><td align="left" colspan="3">
+	Either initialization or runtime errors generated by the kernel (only on systems that support the KVM interface)
+<br/>
+	<i>variable error messages, all coming from kernel</i>
+</td>
+</tr>
+
+</table>
+</section>
+
+</body>
+</document>

@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<properties>
+<title>Supported Devices and Feature Roadmap</title>
+<author
+ email="paco@symbiot.com"
+>Paco NATHAN</author>
+</properties>
+
+<body>
+
+<section
+ name="Operating Systems"
+>
+<p>
+
+Extension methodology: provide support for Java <i>JDK 1.4</i>, <i>gcc</i>, <i>openssl</i>, <i>Perl 5</i>, and <i>Ant</i>
+
+</p>
+<p>
+
+Reference implementation: <i>RedHat</i>
+
+</p>
+<p>
+
+More info:
+
+<a
+ href="./get_started.html"
+>OpenSIMS Manual - Getting Started</a>
+
+</p>
+<table
+ border="0"
+ cellpadding="5"
+>
+
+<tr><th>	+</th><td><i>RedHat Enterprise</i></td></tr>
+<tr><th>	+</th><td><i>Fedora</i></td></tr>
+<tr><th>	+</th><td><i>Gentoo</i></td></tr>
+<tr><th>	+</th><td><i>Debian</i></td></tr>
+<tr><th>	*</th><td><i>FreeBSD</i></td></tr>
+<tr><th>	*</th><td><i>Mac OS X</i></td></tr>
+<tr><th>	*</th><td><i>Solaris</i></td></tr>
+<tr><th>	*</th><td><i>Windows XP</i></td></tr>
+<tr><th>	*</th><td><i>Windows 2000</i></td></tr>
+<tr><th>	*</th><td><i>Windows Server 2003</i></td></tr>
+<tr><th>	?</th><td><i>Windows Longhorn</i></td></tr>
+<tr><th>	?</th><td><i>OpenBSD</i></td></tr>
+<tr><th>	?</th><td><i>NetBSD</i></td></tr>
+<tr><th>	?</th><td><i>OpenDarwin</i></td></tr>
+<tr><th>	?</th><td><i>Turbolinux</i></td></tr>
+<tr><th>	?</th><td><i>SuSE</i></td></tr>
+<tr><th>	?</th><td><i>Yellow Dog</i></td></tr>
+
+</table>
+</section>
+
+<section
+ name="Application Servers"
+>
+<p>
+
+Extension methodology: provide a web container based on <i>JDK 1.4</i> and the <i>Java Servlet 2.3 API</i>
+
+</p>
+<p>
+
+Reference implementation: <i>Tomcat 5.x</i>
+
+</p>
+<p>
+
+More info:
+
+<a
+ href="http://directory.google.com/Top/Computers/Programming/Languages/Java/Server-Side/Application_Servers/"
+ target="_blank"
+>Google Directory: Java Application Servers</a>
+
+</p>
+<table
+ border="0"
+ cellpadding="5"
+>
+
+<tr><th>	+</th><td><i>Tomcat</i></td></tr>
+<tr><th>	*</th><td><i>Resin</i></td></tr>
+<tr><th>	?</th><td><i>JRun</i></td></tr>
+<tr><th>	?</th><td><i>Jetty</i></td></tr>
+<tr><th>	?</th><td><i>JBoss</i></td></tr>
+<tr><th>	?</th><td><i>IBM WebSphere</i></td></tr>
+<tr><th>	?</th><td><i>BEA Weblogic</i></td></tr>
+<tr><th>	?</th><td><i>Enhydra</i></td></tr>
+
+</table>
+</section>
+
+<section
+ name="Databases"
+>
+<p>
+
+Extension methodology: support <i>JDBC 3.0</i> and write a <i>Torque</i> adapter class plus <i>Velocity</i> templates for the RDBMS
+
+</p>
+<p>
+
+Reference implementation: <i>PostgreSQL</i>
+
+</p>
+<p>
+
+More info:
+
+<a
+ href="http://db.apache.org/torque/db-adapters.html"
+ target="_blank"
+>Torque - Database Adapters</a>
+
+</p>
+<table
+ border="0"
+ cellpadding="5"
+>
+
+<tr><th>	+</th><td><i>PostgreSQL</i></td></tr>
+<tr><th>	+</th><td><i>MySQL</i></td></tr>
+<tr><th>	+</th><td><i>Oracle</i></td></tr>
+<tr><th>	?</th><td><i>Sybase</i></td></tr>
+<tr><th>	?</th><td><i>Cloudscape (Derby)</i></td></tr>
+<tr><th>	?</th><td><i>MS SQL</i></td></tr>
+<tr><th>	?</th><td><i>DB2</i></td></tr>
+<tr><th>	?</th><td><i>Weblogic</i></td></tr>
+<tr><th>	?</th><td><i>Axion</i></td></tr>
+<tr><th>	?</th><td><i>MS Access</i></td></tr>
+<tr><th>	?</th><td><i>Hypersonic</i></td></tr>
+<tr><th>	?</th><td><i>InstantDB</i></td></tr>
+<tr><th>	?</th><td><i>SapDB</i></td></tr>
+
+</table>
+</section>
+
+<section
+ name="GUI and Clients"
+>
+<p>
+
+Extension methodology: copy or subclass the <i>OpenSIMS</i> subscriber protocol UML statechart for transacting simple XML messages
+
+</p>
+<p>
+
+Reference implementation: <i>Flash XMLSocket</i>
+
+</p>
+<p>
+
+More info:
+
+<a
+ href="http://opensims.org/docs/javadoc/org/opensims/client/Subscriber.html"
+ target="_blank"
+>Subscriber interface in Java API</a>
+
+</p>
+<table
+ border="0"
+ cellpadding="5"
+>
+
+<tr><th>	+</th><td><i>Flash</i></td></tr>
+<tr><th>	*</th><td><i>Java Applet</i></td></tr>
+<tr><th>	*</th><td><i>IBM Tivoli Enterprise Management</i></td></tr>
+<tr><th>	*</th><td><i>BMC Patrol</i></td></tr>
+<tr><th>	?</th><td><i>OpenGL</i></td></tr>
+<tr><th>	?</th><td><i>HP OpenView</i></td></tr>
+<tr><th>	?</th><td><i>ISS Site Protector</i></td></tr>
+<tr><th>	?</th><td><i>Symantec ESM</i></td></tr>
+
+</table>
+</section>
+
+<section
+ name="Policy"
+>
+<p>
+
+Extension methodology: copy the <i>OpenSIMS</i> network modeling protocol UML statechart and sequence the appropriate <i>AgentSDK</i> agent plugins
+
+</p>
+<p>
+
+Reference implementation: <code>autod_uml.xml</code>
+
+</p>
+<p>
+
+More info:
+
+<a
+ href="http://opensims.org/docs/javadoc/org/opensims/model/Scan.html"
+ target="_blank"
+>Scan interface in Java API</a> (as an example)
+
+</p>
+<table
+ border="0"
+ cellpadding="5"
+>
+
+<tr><th>	+</th><td><i>active scanning autodiscovery</i></td></tr>
+<tr><th>	+</th><td><i>service availability monitoring</i></td></tr>
+<tr><th>	i</th><td><i>remediation actions</i></td></tr>
+<tr><th>	*</th><td><i>passive autodiscovery</i></td></tr>
+<tr><th>	*</th><td><i>subscriber protocol</i></td></tr>
+<tr><th>	*</th><td><i>correlation engine</i></td></tr>
+<tr><th>	*</th><td><i>notfication rules</i></td></tr>
+
+</table>
+</section>
+
+<section
+ name="Reporting"
+>
+<p>
+
+Extension methodology: subclass the <i>OpenSIMS</i> reporting interface, add/modify the XSL templates, and support or transform the XML feed
+
+</p>
+<p>
+
+Reference implementation: <i>JDOM</i> XSLT to generate HTML
+
+</p>
+<p>
+
+More info:
+
+<a
+ href="http://opensims.org/docs/javadoc/org/opensims/report/Report.html"
+ target="_blank"
+>Report interface in Java API</a>
+
+</p>
+<table
+ border="0"
+ cellpadding="5"
+>
+
+<tr><th>	+</th><td><i>Top Attackers</i></td></tr>
+<tr><th>	+</th><td><i>Top Attacks</i></td></tr>
+<tr><th>	+</th><td><i>Incident Report</i></td></tr>
+<tr><th>	+</th><td><i>Attacker Profile</i></td></tr>
+<tr><th>	+</th><td><i>Defender Profile</i></td></tr>
+<tr><th>	+</th><td><i>Alert Type</i></td></tr>
+<tr><th>	+</th><td><i>Country</i></td></tr>
+<tr><th>	+</th><td><i>Network Model</i></td></tr>
+<tr><th>	+</th><td><i>Agent/Plugin Provisioning</i></td></tr>
+<tr><th>	+</th><td><i>Webapp Operational Test</i></td></tr>
+<tr><th>	i</th><td><i>Top Countries</i></td></tr>
+
+</table>
+</section>
+
+<section
+ name="Remediation and Notification"
+>
+<p>
+
+Extension methodology: subclass the <i>OpenSIMS</i> notification interface and support or transform the XML feed
+
+</p>
+<p>
+
+Reference implementation: XMPP (<i>Jabber</i>)
+
+</p>
+<p>
+
+More info:
+
+<a
+ href="http://opensims.org/docs/javadoc/org/opensims/notify/Notify.html"
+ target="_blank"
+>Notify interface in Java API</a>
+
+</p>
+<table
+ border="0"
+ cellpadding="5"
+>
+
+<tr><th>	+</th><td><i>XMPP (Jabber/IM)</i></td></tr>
+<tr><th>	+</th><td><i>SMTP (email)</i></td></tr>
+<tr><th>	+</th><td><i>HTTP (web page POST)</i></td></tr>
+<tr><th>	+</th><td><i>Telnet</i></td></tr>
+<tr><th>	i</th><td><i>Ambient Devices</i></td></tr>
+<tr><th>	*</th><td><i>syslog</i></td></tr>
+<tr><th>	*</th><td><i>log4j</i></td></tr>
+<tr><th>	*</th><td><i>RSS (0.9/1.0/2.0)</i></td></tr>
+<tr><th>	*</th><td><i>Atom</i></td></tr>
+<tr><th>	*</th><td><i>SOAP/.NET web services</i></td></tr>
+<tr><th>	*</th><td><i>Bugzilla</i></td></tr>
+<tr><th>	*</th><td><i>LED wall board drivers</i></td></tr>
+<tr><th>	*</th><td><i>Macromedia Breeze</i></td></tr>
+<tr><th>	*</th><td><i>Oddcast</i></td></tr>
+<tr><th>	*</th><td><i>IBM Tivoli</i></td></tr>
+<tr><th>	*</th><td><i>BMC Remedy/ARS</i></td></tr>
+<tr><th>	?</th><td><i>BMC Patrol</i></td></tr>
+<tr><th>	?</th><td><i>HP OpenView</i></td></tr>
+<tr><th>	?</th><td><i>StarTeam</i></td></tr>
+
+</table>
+</section>
+
+<section
+ name="Agents (Sensors)"
+>
+<p>
+
+Extension methodology: subclass the <i>OpenSIMS</i> agent plugin interface and support the XML message schema, plus provide a plugin for the <i>AgentSDK</i>
+
+</p>
+<p>
+
+Reference implementation: <i>Snort</i> via <code>symplugin-snort-log</code>
+
+</p>
+<p>
+
+More info:
+
+<a
+ href="http://opensims.org/docs/javadoc/org/opensims/agent/Plugin.html"
+ target="_blank"
+>Plugin interface in Java API</a>
+
+</p>
+<table
+ border="0"
+ cellpadding="5"
+>
+
+<tr><th>	+</th><td><i>Snort</i></td></tr>
+<tr><th>	+</th><td><i>Nagios</i></td></tr>
+<tr><th>	+</th><td><i>syslog adapter</i></td></tr>
+<tr><th>	+</th><td><i>log file / regex adapter</i></td></tr>
+<tr><th>	*</th><td><i>SpamAssassin</i></td></tr>
+<tr><th>	*</th><td><i>ClamAV</i></td></tr>
+<tr><th>	*</th><td><i>SNMP adapter</i></td></tr>
+<tr><th>	?</th><td><i>Cisco Security Agent (Okena)</i></td></tr>
+<tr><th>	?</th><td><i>Nessus</i></td></tr>
+<tr><th>	?</th><td><i>NetBotz</i></td></tr>
+<tr><th>	?</th><td><i>Tripwire</i></td></tr>
+<tr><th>	?</th><td><i>NA McAfee VirusScan Sophos</i></td></tr>
+<tr><th>	?</th><td><i>Symantec Norton AntiVirus</i></td></tr>
+<tr><th>	?</th><td><i>ISS RealSecure</i></td></tr>
+<tr><th>	?</th><td><i>Enterasys</i></td></tr>
+<tr><th>	?</th><td><i>Entercept</i></td></tr>
+<tr><th>	?</th><td><i>Cisco Secure IDS</i></td></tr>
+<tr><th>	?</th><td><i>Network Flight Recorder</i></td></tr>
+<tr><th>	?</th><td><i>Symantec ManHunt</i></td></tr>
+<tr><th>	?</th><td><i>IntrusionSecure Net Provider</i></td></tr>
+<tr><th>	?</th><td><i>SourceFire Network Sensor</i></td></tr>
+
+</table>
+</section>
+
+<section
+ name="Agent (Effectors)"
+>
+<p>
+
+Extension methodology: subclass the <i>OpenSIMS</i> agent plugin interface and support the XML message schema, plus provide a plugin for the <i>AgentSDK</i>
+
+</p>
+<p>
+
+Reference implementation: <i>iptables</i> via <code>symplugin-effector</code>
+
+</p>
+<p>
+
+More info:
+
+<a
+ href="http://opensims.org/docs/javadoc/org/opensims/agent/Plugin.html"
+ target="_blank"
+>Plugin interface in Java API</a>
+
+</p>
+<table
+ border="0"
+ cellpadding="5"
+>
+
+<tr><th>	+</th><td><i>any executable on same host as AgentDSK</i></td></tr>
+<tr><th>	i</th><td><i>Cisco PIX</i></td></tr>
+<tr><th>	*</th><td><i>iptables</i></td></tr>
+<tr><th>	*</th><td><i>SonicWall</i></td></tr>
+<tr><th>	*</th><td><i>Check Point FireWall-1</i></td></tr>
+<tr><th>	*</th><td><i>IOS</i></td></tr>
+<tr><th>	*</th><td><i>OPSEC</i></td></tr>
+<tr><th>	*</th><td><i>SNMP</i></td></tr>
+<tr><th>	?</th><td><i>Check Point VPN-1</i></td></tr>
+<tr><th>	?</th><td><i>Cisco VPN 3000</i></td></tr>
+<tr><th>	?</th><td><i>Nortel Contivity</i></td></tr>
+<tr><th>	?</th><td><i>NA McAfeee Policy Orchestrator</i></td></tr>
+<tr><th>	?</th><td><i>NetScreen</i></td></tr>
+<tr><th>	?</th><td><i>Symantec Enterprise Firewall (Raptor)</i></td></tr>
+<tr><th>	?</th><td><i>CyberGuard</i></td></tr>
+<tr><th>	?</th><td><i>Gauntlet</i></td></tr>
+<tr><th>	?</th><td><i>Lucent Brick</i></td></tr>
+<tr><th>	?</th><td><i>Sidewinder</i></td></tr>
+<tr><th>	?</th><td><i>Nokia IPSO</i></td></tr>
+<tr><th>	?</th><td><i>Top Layer Attack Mitigator</i></td></tr>
+
+</table>
+</section>
+
+<section
+ name="GIS/Attacker Profiling"
+>
+<p>
+
+Extension methodology: subclass the <i>OpenSIMS</i> geolocation interface, and provide a data source
+
+</p>
+<p>
+
+Reference implementation: MaxMind <i>GeoIP</i>
+
+</p>
+<p>
+
+More info:
+
+<a
+ href="http://opensims.org/docs/javadoc/org/opensims/geoloc/GeoLoc.html"
+ target="_blank"
+>GeoLoc interface in Java API</a>
+
+</p>
+<table
+ border="0"
+ cellpadding="5"
+>
+
+<tr><th>	+</th><td><i>MaxMind GeoIP</i></td></tr>
+<tr><th>	*</th><td><i>OpenGIS</i></td></tr>
+<tr><th>	*</th><td><i>IP2Location</i></td></tr>
+
+</table>
+</section>
+
+<section
+ name="Localization"
+>
+<p>
+
+Extension methodology: provide support for Java <code>java.util.Locale</code>, translate the XSL templates used for reporting and the XML files used for <i>Flash</i> GUI configuration
+
+</p>
+<p>
+
+Reference implementation: English, Spanish, French
+
+</p>
+<p>
+
+More info:
+
+<a
+ href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Locale.html"
+ target="_blank"
+>Java Locales</a>
+
+</p>
+<table
+ border="0"
+ cellpadding="5"
+>
+
+<tr><th>	+</th><td><i>English</i></td></tr>
+<tr><th>	+</th><td><i>French</i></td></tr>
+<tr><th>	*</th><td><i>Spanish</i></td></tr>
+<tr><th>	?</th><td><i>Italian</i></td></tr>
+<tr><th>	?</th><td><i>Portuguese</i></td></tr>
+<tr><th>	?</th><td><i>Malay-Indonesian</i></td></tr>
+<tr><th>	?</th><td><i>Hindustani</i></td></tr>
+<tr><th>	?</th><td><i>Japanese</i></td></tr>
+<tr><th>	?</th><td><i>Mandarin</i></td></tr>
+<tr><th>	?</th><td><i>Korean</i></td></tr>
+<tr><th>	?</th><td><i>German</i></td></tr>
+<tr><th>	?</th><td><i>Russian</i></td></tr>
+<tr><th>	?</th><td><i>Czech</i></td></tr>
+
+</table>
+</section>
+
+</body>
+</document>

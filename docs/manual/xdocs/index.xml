@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<properties>
+<title>OpenSIMS Manual</title>
+<author
+ email="paco@symbiot.com"
+>Paco NATHAN</author>
+</properties>
+
+<body>
+
+<section
+ name="Interactive Documentation"
+>
+<p>
+
+The following content serves as an interactive guide to the
+
+<a
+ href="http://www.opensims.org/"
+>OpenSIMS</a>,
+
+an 
+
+<i><U>Open</U> Source <U>S</U>ecurity <U>I</U>nfrastructure
+<U>M</U>anagement <U>S</U>ystem</i>.
+
+The system provides means for tying together the open source tools
+used for security management into a common infrastructure.
+
+It leads toward the development of new SIMS technologies which allow
+different networks using risk metrics to collaborate on attacker
+profiling and remediation.
+
+</p>
+<p>
+
+Perhaps one of the best ways to learn about how <i>OpenSIMS</i> works,
+is to view our
+
+<a
+ href="http://opensims.org/screens.html" 
+>screenshots</a>
+
+tour and
+
+<a
+ href="http://opensims.org/scary.html"
+>animation</a>
+
+movie.
+
+Another good approach is to look over our
+
+<a
+ href="http://opensims.org/docs/pdf/arch_detail.pdf" 
+>architecture</a>.
+
+
+</p>
+</section>
+
+<section
+ name="Document Version"
+>
+<p>
+
+<code>
+<pre>
+$Id: index.xml 1 2008-01-10 18:37:05Z smoot $
+</pre>
+</code>
+
+</p>
+</section>
+
+</body>
+</document>

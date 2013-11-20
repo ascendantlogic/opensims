@@ -1,0 +1,68 @@
+<!-- $CVSId: latest.html,v 1.27 2006/05/28 21:23:58 mikee Exp $ -->
+<!-- $Id: latest.html 1 2008-01-10 18:37:05Z smoot $
+<PRE>
+<PRE> 
+Release Notes: OpenSIMS_0.9 LiveCD fc1
+
+=======================================================================
+OpenSIMS 0.9 Release Notes                                 21 May 2006
+=======================================================================
+
+First off, this release of OpenSIMS is mostly a renovation of the code base
+from the 0.8 series for resiliency. There were a lot of major stability bugs
+which were addressed during the last year. I'm not claiming it's perfect,
+I'm just happy to see it better off. There is one "out of memory" and/or
+"race condition" bug that I'll enter as a priority 0 bug on source forge
+that you should be aware of. It's inconsistent, but happens quite often on
+systems that are prone to its occurrence.
+
+There are quite a few of the other items that are still in limbo. Most
+particularly, user/group access permissions are stubbed out, but
+hap-hazardously used throughout. A real treatment of how multiple users and
+organizations are handled will be addressed in the next few coming versions.
+Also, the flash front-end is starting to show its age. I expect that we will
+spend some time on refactoring some of that navigational code into AJAX and
+leaving Flash for the few things that it's really good at (mostly
+animations).
+
+Some comments about the LiveCD: I mostly build the LiveCD with the intention
+of using it to demonstrate how the base OpenSIMS system was designed to be
+installed. A great number of people commented on the difficulty that they
+had with prior OpenSIMS versions in getting the right versions of Java, gcc,
+torque, postgres, etc, etc. The LiveCD should pretty much work out of the
+hat. The reasons it might not work are:
+
+ 1> The kernel doesn't have some esoteric driver for some weird hardware. 
+ 2> The hotplug/coldplug kernel module loader flaked out not finding stuff. 
+ 3> Various problems with the circumstances of how its wired into the net. 
+ 4> Little blue devils have popped up and are nibbling at fringes.
+
+Also, a nice point about the LiveCD is that I've gotten the system built
+with the most bleeding edge stuff. It has the latest kernel (2.6.16) and the
+latest versions of all other dependent packages (libsymbiot, symagent,
+snort, nmap, JAVA, postgres, torque, et al). For now, if you want to install
+OpenSIMS in a more permanent fashion, you'll need to copy it from the ISO
+image (CD) and tweak with the configs for your environment. I fully expect
+to have a "package installer" built into the next LiveCD release (probably
+0.9.1) that will allow you to just boot the CD then point it at a fresh hard
+drive.
+
+Speaking on that topic, you might also notice that I've chosen to build the
+LiveCD base from the Gentoo distribution. I'm particularly warm to Gentoo,
+so if that really chaps your hide, then I apologize in advance. For those
+Gentoo nutz, I'll probably have an e-build out shortly so you can just
+emerge it. For those of you that favor other distros, whurley has a gang of
+guys interested in making ports for FreeBSD, NetBSD, Debian, and RedHat
+(although an RPM is going to take some doing).
+
+--Mikee <mikee@symbiot.com>
+
+=======================================================================
+</PRE>
+
+
+
+
+
+
+</PRE>

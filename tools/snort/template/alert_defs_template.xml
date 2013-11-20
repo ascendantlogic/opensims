@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ALERT_DEFS
+ tick="1086577464000"
+>
+
+<!--
+$Id: alert_defs_template.xml 1 2008-01-10 18:37:05Z smoot $
+OpenSIMS - default alert defs template
+
+Mike ERWIN mikee@symbiot.com
+Paco NATHAN paco@symbiot.com
+Jim NASBY jnasby@symbiot.com
+Lindsey SIMON lsimon@symbiot.com
+
+@LICENSE@
+ -->
+
+<ALERT_DEF
+ unique_id="spamd:1:9"
+ type="spam"
+ msg="email scoring exceeded thresholds"
+/>
+
+<ALERT_DEF
+ unique_id="nagios:1:1"
+ type="service"
+ msg="service availability changed"
+/>
+
+<ALERT_DEF
+ unique_id="snort:1:1256"
+ type="malware"
+ msg="WEB-IIS CodeRed v2 root.exe access"
+>
+<REF
+ ref="url"
+ url="http://"
+ path="commtechlab.msu.edu/sites/aslweb/I/W1719.htm"
+/>
+</ALERT_DEF>
+<ALERT_DEF
+ unique_id="snort:1:1807"
+ type="exploit"
+ msg="WEB-MISC Chunked-Encoding transfer attempt"
+/>
+</ALERT_DEFS>

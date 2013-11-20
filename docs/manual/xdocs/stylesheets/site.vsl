@@ -1,0 +1,283 @@
+<!-- Content Stylesheet for Site -->
+
+    ## Defined variables
+    #set ($bodybg = "#ffffff")
+    #set ($bodyfg = "#000000")
+    #set ($bodylink = "#525D76")
+    #set ($bannerbg = "#525D76")
+    #set ($bannerfg = "#ffffff")
+    #set ($tablethbg = "#039acc")
+    #set ($tabletdbg = "#a0ddf0")
+    
+<!-- start the processing -->
+#document()
+<!-- end the processing -->
+
+## This is where the macro's live
+
+#macro ( makeProject )
+    ##set ($menus = $project.getChild("body").getChildren("menu"))
+    #set ($menus = $xpath.applyTo("body/menu", $project))
+
+    #foreach ( $menu in $menus )
+<table
+ width="150"
+ border="0"
+ cellspacing="0"
+ cellpadding="0"
+>
+<tr>
+<td
+ bgcolor="#FF6600"
+ height="25"
+>
+<font
+ color="#FFFFFF"
+ pointsize="16"
+>
+        <b>&nbsp;$menu.getAttributeValue("name")</b>
+</font>
+</td>
+</tr>
+<tr>
+<td
+ height="5"
+>
+</td>
+</tr>
+<tr>
+<td>
+
+        #foreach ( $item in $menu.getChildren() )
+            #set ($name = $item.getAttributeValue("name"))
+            #projectanchor($name $item.getAttributeValue("href"))<br/>
+        #end
+
+</td>
+</tr>
+<tr>
+<td
+ height="10"
+>
+</td>
+</tr>
+</table>
+    #end
+#end
+
+#macro ( image $value )
+#if ($value.getAttributeValue("width"))
+#set ($width=$value.getAttributeValue("width"))
+#end
+#if ($value.getAttributeValue("height"))
+#set ($height=$value.getAttributeValue("height"))
+#end
+#if ($value.getAttributeValue("align"))
+#set ($align=$value.getAttributeValue("align"))
+#end
+<img src="$value.getAttributeValue("src")" width="$!width" height="$!height" align="$!align">
+#end
+
+#macro ( projectanchor $name $value )
+    <a href="$relativePath$value">$name</a>
+#end
+#macro ( metaauthor $author $email )
+            <meta name="author" value="$author">
+            <meta name="email" value="$email">
+#end
+
+#macro (document)
+    <!-- ====================================================================== -->
+    <!-- Main Page Section -->
+    <!-- ====================================================================== -->
+
+<html
+ xmlns="http://www.w3.org/1999/xhtml"
+ lang="en"
+ xml:lang="en"
+>
+<head>
+<meta
+ http-equiv="Content-Type"
+ content="text/html; charset=utf-8"
+/>
+
+<style
+ type="text/css"
+>
+<!--
+body,td,th {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #333333;
+}
+a:link {
+	color: #0000CC;
+}
+a:visited {
+	color: #0000CC;
+}
+a:hover {
+	color: #FF6600;
+}
+a:active {
+	color: #FF6600;
+}
+h1 {
+	font-size: 16px;
+}
+h2 {
+	font-size: 14px;
+}
+-->
+</style>
+
+            ##set ($au = $root.getChild("properties").getChild("author").getText())
+            ##set ($em = $root.getChild("properties").getChild("author").getAttributeValue("email"))
+
+<!--
+            ## For some reason, we can't .getText() and .getValue() directly in the
+            ## set directive, but rather have to wait a moment, and do it in the
+            ## metaauthor directive.
+
+            #set ($au = $xpath.applyTo("properties/author", $root).get(0))
+            #set ($em = $xpath.applyTo("properties/author/@email", $root).get(0))
+
+            ## This should work, but doesn't
+
+            ##set ($au = $xpath.applyTo("properties/author", $root).get(0).getText())
+            ##set ($em = $xpath.applyTo("properties/author/@email", $root).get(0).getValue())
+
+-->
+
+
+            #metaauthor ( $au.getText() $em.getValue() )
+
+<title>OpenSIMS Manual - $root.getChild("properties").getChild("title").getText()</title>
+</head>
+
+<body>        
+<table
+ width="700"
+ border="0"
+ cellspacing="0"
+ cellpadding="0"
+>
+<tr>
+<td
+ width="150"
+ valign="top"
+>
+<a
+ href="http://www.opensims.org/"
+><img
+ src="../images/logo.jpg"
+ width="134"
+ height="115"
+ border="0"
+></a>
+<br/>
+<br/>
+
+                #makeProject()
+
+</td>
+
+<td
+ width="650"
+ valign="top"
+>
+<center>
+<table
+ width="600"
+ border="0"
+ cellspacing="0"
+ cellpadding="10"
+>
+<tr>
+<td>
+<br/>
+<br/>
+<br/>
+<br/>
+
+<!-- document body -->
+
+<h2>
+<font
+ color="#FF6600"
+ size="+2"
+>
+	$root.getChild("properties").getChild("title").getText()
+</font>
+</h2>
+
+                ##set ($allSections = $root.getChild("body").getChildren("section"))
+                #set ($allSections = $xpath.applyTo("body/section", $root))
+
+                #foreach ( $section in $allSections )
+
+<h3>
+<font
+ color="#0000CC"
+>
+		    $section.getAttributeValue("name")
+</font>
+</h3>
+
+                    #foreach ( $item in $section.getChildren() )                
+                        #if ($item.getName().equals("img"))
+                            #image ($item)
+                        #else
+                            $xmlout.outputString($item)
+                        #end
+                    #end
+
+		    <hr width="40"/>
+                #end
+                
+<br/>
+<br/>
+</td>
+</tr>
+</table>
+<center>
+
+</td>
+</tr>
+
+<!-- footer -->
+
+<tr>
+<td
+ colspan="2"
+>
+<br/>
+<br/>
+      
+<font
+ color="#666666"
+ size="-2"
+> 
+(C) 2001-2008, The OpenSIMS Project and <a href="http://www.symbiot.com">Symbiot, Inc.</a>  -- All rights reserved.
+
+Licensed under the <a href="/LICENSE" target="_blank">BSD License</a>.
+
+Read the <a href="/rm_proposal.pdf">Apache Incubator Proposal</a> for more information.
+
+Symbiot, OpenSIMS, and the OpenSIMS Clownfish are Trademarks of Symbiot, Inc.
+
+All other trademarks are the property of their respective owners.
+
+Questions, Comments, Request, Corrections?
+
+Email us at <a href="mailto:info@opensims.org">info@opensims.org</a>
+
+</font>
+</td>
+</tr>            
+</table>
+
+</body>
+</html>
+#end

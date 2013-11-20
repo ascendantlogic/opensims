@@ -1,0 +1,79 @@
+<project name="Snort" default="preflight" basedir=".">
+<!--
+@LICENSE@
+
+Paco NATHAN paco@symbiot.com
+Jim NASBY jnasby@symbiot.com
+Mike ERWIN mikee@symbiot.com
+ -->
+	<description>
+		$CVSId: build.xml,v 1.19 2005/02/25 16:08:02 dan Exp $ OpenSIMS - IDS rule parsing (Snort) A typical installation target sequence would be: ant -v install-opensims | tee install.txt 
+		$Id: build.xml 1 2008-01-10 18:37:05Z smoot $
+	</description>
+<!-- ######################################################################
+		global properties
+     ###################################################################### -->
+	<property name="build.dir" location="../../build" />
+	<import file="${build.dir}/properties.xml" />
+	<property name="default.alert.types.template" location="${basedir}/template/alert_types_template.xml" />
+	<property name="default.alert.defs.file" location="${basedir}/template/alert_defs_template.xml" />
+<!-- ######################################################################
+		preflight check
+     ###################################################################### -->
+	<target name="seek_rules" description="test the property which defines the location of Snort rules">
+		<available file="${snort.rules}/exploit.rules" property="snort.rules.present" />
+	</target>
+	<target name="seek_rules_error" description="inform the user of the non-being of their Snort rules" depends="seek_rules" unless="snort.rules.present">
+		<echo>
+			most sorry, honorable user rules of Snort have entered non-space please fix config. ...you will want to add a setting for snort.rules=/where/ever/snort/rules/live ...to the "build.properties" file, because the current setting does not appear to be correct. 
+		</echo>
+	</target>
+	<target name="preflight" description="test the properties set for Snort" depends="seek_rules_error" if="snort.rules.present">
+		<echo>
+			Apparently we found your Snort rules living where expected at: ${snort.rules} ...good to go. 
+		</echo>
+	</target>
+<!-- ######################################################################
+		Snort maintenance tasks
+     ###################################################################### -->
+	<target name="install" description="setup the initial XML configuration files from default templates">
+		<copy file="${default.alert.types.template}" todir="${var.lib}" />
+		<copy file="${default.alert.defs.file}" tofile="${alert.defs.file}" />
+	</target>
+	<target name="download" description="download the latest Snort rules (optional) - update as needed">
+		<property name="snort.rules.url" value="http://www.snort.org/dl/rules/snortrules-snapshot-CURRENT.tar.gz" />
+		<get src="${snort.rules.url}" dest="${basedir}/snort_rules.tgz" />
+	</target>
+	<target name="guess" description="generate heuristics for guessing alert types, based on the existing Snort rules">
+		<tempfile property="temp.guess.file" destdir="${temp.dir}" prefix="temp" suffix=".csv" />
+		<xslt in="${alert.types.template}" out="${temp.guess.file}" style="template/guess_types.xsl" force="true" reloadstylesheet="true">
+		</xslt>
+	</target>
+	<target name="parse" depends="guess" description="parse the Snort rules to generate a base of XML alert definitions">
+		<chmod file="${basedir}/parse_snortrules.pl" type="file" perm="755" />
+		<exec executable="${basedir}/parse_snortrules.pl" output="${snort.defs.file}">
+			<arg value="${snort.dir}" />
+			<arg value="${snort.rules}" />
+			<arg value="${temp.guess.file}" />
+		</exec>
+		<delete file="${temp.guess.file}" />
+	</target>
+	<target name="mergeclean" description="merge the generated XML alert definitions into the main alert definitions, ignoring currently-installed alert definitions">
+		<tempfile property="temp.defs.file" destdir="${temp.dir}" prefix="temp" suffix=".xml" />
+		<xslt in="${snort.defs.file}" out="${temp.defs.file}" style="template/merge_defs.xsl" force="true" reloadstylesheet="true">
+			<param name="alert_types_template" expression="${alert.types.template}" />
+		</xslt>
+		<move file="${alert.defs.file}" tofile="${alert.defs.file}.bak" />
+		<move file="${temp.defs.file}" tofile="${alert.defs.file}" />
+	</target>
+	<target name="merge" description="merge the generated XML alert definitions into the main alert definitions">
+		<tempfile property="temp.defs.file" destdir="${temp.dir}" prefix="temp" suffix=".xml" />
+		<xslt in="${snort.defs.file}" out="${temp.defs.file}" style="template/merge_defs.xsl" force="true" reloadstylesheet="true">
+			<param name="alert_types_template" expression="${alert.types.template}" />
+			<param name="prev_defs_file" expression="${alert.defs.file}" />
+		</xslt>
+		<move file="${alert.defs.file}" tofile="${alert.defs.file}.bak" />
+		<move file="${temp.defs.file}" tofile="${alert.defs.file}" />
+	</target>
+	<target name="install-opensims" depends="install,parse,merge" description="top-level target for installing an OpenSIMS distribution" />
+</project>

@@ -1,0 +1,453 @@
+<project
+ name="Torque"
+ default="preflight"
+ basedir="."
+>
+
+<!--
+@LICENSE@
+
+Paco NATHAN paco@symbiot.com
+ -->
+
+<description>
+$CVSId: build.xml,v 1.20 2007/02/20 00:42:36 jeff Exp $
+$Id: build.xml 16 2008-04-08 16:36:17Z smoot $
+
+OpenSIMS - build script for Torque persistance layer
+
+A typical installation target sequence would be:
+
+	ant -v install-opensims | tee install.txt
+
+Prepare to backup or migrate your database:
+
+	ant datadump
+
+Compile the templates to regenerate an SQL schema plus Java wrappers:
+
+	ant clean config build
+
+</description>
+
+
+<!-- ######################################################################
+		global properties
+     ###################################################################### -->
+
+<property
+ name="build.dir"
+ location="../../build"
+/>
+<import
+ file="${build.dir}/properties.xml"
+/>
+
+<property
+ name="tdk.home"
+ value="${basedir}"
+/>
+<property
+ name="tdk.project"
+ value="opensims"
+/>
+
+<property
+ file="${basedir}/database/${db.platform}"
+/>
+<property
+ file="${basedir}/build.properties"
+/>
+
+<property
+ name="opensims.java.dir"
+ location="../../java"
+/>
+<property
+ name="opensims.docs.dir"
+ location="../../docs"
+/>
+<property
+ name="opensims.torque.dir"
+ location="${basedir}"
+/>
+
+
+<!-- ######################################################################
+		classpath handling
+     ###################################################################### -->
+
+<import
+ file="${opensims.java.dir}/classpath.xml"
+/>
+
+<path
+ id="classpath"
+>
+<path
+ refid="opensims.classpath"
+/>
+</path>
+
+
+<!-- ######################################################################
+		install tasks
+     ###################################################################### -->
+
+<target
+ name="clean"
+ description="delete any generated files"
+>
+<!--
+<echoproperties/>
+ -->
+<tstamp/>
+
+<delete
+ includeEmptyDirs="true"
+ quiet="true"
+>
+<fileset
+ dir="${basedir}"
+ includes="**/*~"
+ defaultExcludes="no"
+/>
+</delete>
+</target>
+
+<target
+ name="install-opensims"
+ description="top-level target for installing an OpenSIMS distribution"
+ depends="already_installed"
+ unless="already.installed"
+>
+<ant
+ target="install-opensims-sub"
+/>
+</target>
+
+<target
+ name="already_installed"
+>
+<available property="already.installed" file="INSTALLED"/>
+</target>
+
+<target
+ name="install-opensims-sub"
+ description="top-level target for installing an OpenSIMS distribution"
+ depends="clean,config,build,erd"
+>
+<touch file="INSTALLED"/>
+</target>
+
+
+<!-- ######################################################################
+		build tasks
+     ###################################################################### -->
+
+<target
+ name="config"
+ description="configure the Torque properties file, in a standard location"
+>
+<copy
+ file="${basedir}/torque.properties"
+ todir="${build.dir}"
+ overwrite="true"
+/>
+
+<replace
+ file="${build.dir}/torque.properties"
+>
+<replacefilter
+ token="@TORQUE.DIR@"
+ value="${opensims.torque.dir}"
+/>
+<replacefilter
+ token="@TORQUE.PROJECT@"
+ value="${torque.project}"
+/>
+<replacefilter
+ token="@TORQUE.DATABASE@"
+ value="${torque.database}"
+/>
+<replacefilter
+ token="@TORQUE.DATABASE.DRIVER@"
+ value="${torque.database.driver}"
+/>
+<replacefilter
+ token="@TORQUE.DATABASE.JARFILE@"
+ value="${torque.database.jarFile}"
+/>
+<replacefilter
+ token="@TORQUE.DATABASE.SCHEMA@"
+ value="${torque.database.schema}"
+/>
+<replacefilter
+ token="@TORQUE.DATABASE.URL@"
+ value="${torque.database.url}"
+/>
+<replacefilter
+ token="@TORQUE.DATABASE.USER@"
+ value="${torque.database.user}"
+/>
+<replacefilter
+ token="@TORQUE.DATABASE.PASSWORD@"
+ value="${torque.database.password}"
+/>
+</replace>
+</target>
+
+
+<target
+ name="load_properties"
+ description="load the Torque properties file, from a standard location"
+>
+<property
+ file="${build.dir}/torque.properties"
+/>
+
+<copy
+ file="${db.jdbc.jar}"
+ todir="${basedir}/lib"
+/>
+</target>
+
+
+<target
+ name="preflight"
+ description="test the user settings for Torque properties"
+ depends="config,load_properties"
+>
+<echo>
+Now using Torque to build OpenSIMS database ...
+
+	platform:	${db.platform}
+	driver:		${db.jdbc.driver}
+	JAR file:	${db.jdbc.jar}
+	user:		${db.user}
+	password:	${db.password}
+	create URL:	${createDatabaseUrl}
+	build URL:	${buildDatabaseUrl}
+	db URL:		${databaseUrl}
+	valid query:	${torque.database.validationQuery}
+
+...the answer should be '1'
+...otherwise, your database properties are not quite right.
+ 
+</echo>
+
+<sql
+ classpath="${db.jdbc.jar}"
+ driver="${db.jdbc.driver}"
+ url="${createDatabaseUrl}"
+ userid="${db.user}"
+ password="${db.password}"
+ print="true"
+>
+${torque.database.validationQuery}
+;
+</sql>
+</target>
+
+
+<target
+ name="build"
+ description="build the database schema using Torque"
+ depends="load_properties"
+>
+<ant
+ antfile="build-torque.xml"
+/>
+<ant
+ antfile="build-torque.xml"
+ target="create-db"
+/>
+
+<ant
+ antfile="build-torque.xml"
+ target="doc"
+/>
+<ant
+ antfile="build-torque.xml"
+ target="datadtd"
+/>
+
+<ant
+ antfile="build-torque.xml"
+ target="insert-sql"
+/>
+</target>
+
+
+<target
+ name="generate"
+ description="generate the database java objects schema using Torque"
+ depends="load_properties"
+>
+<ant
+ antfile="build-torque.xml"
+/>
+
+<ant
+ antfile="build-torque.xml"
+ target="doc"
+/>
+<ant
+ antfile="build-torque.xml"
+ target="datadtd"
+/>
+</target>
+
+
+<target
+ name="erd"
+ description="convert the XML schema to a Mogwai ERDesigner XDM graph"
+>
+<xslt
+ in="${basedir}/schema/${tdk.project}-schema.xml"
+ out="${opensims.docs.dir}/torque/${tdk.project}-schema.xdm"
+ style="${basedir}/schema2erd.xsl"
+ force="true"
+ reloadstylesheet="true"
+/>
+</target>
+
+
+<!-- ######################################################################
+		unit test
+     ###################################################################### -->
+
+<target
+ name="compile"
+ description="run the Java compiler on the generated OM code"
+ depends="clean,load_properties,classpath"
+>
+<javac
+ deprecation="yes"
+ verbose="yes"
+ debug="on"
+ destdir="${opensims.java.dir}"
+ srcdir="${opensims.java.dir}"
+ includes="org/opensims/db/**/*.java"
+>
+<classpath
+ refid="classpath"
+/>
+</javac>
+</target>
+
+
+<target
+ name="test"
+ description="unit test for Torque integration with OpenSIMS webapp Java API"
+ depends="config,compile"
+>
+<java
+ classname="org.opensims.db.TestInsert"
+>
+<classpath
+ refid="classpath"
+/>
+<arg
+ value="${build.dir}/torque.properties"
+/>
+</java>
+
+<java
+ classname="org.opensims.db.TestSelect"
+>
+<classpath
+ refid="classpath"
+/>
+<arg
+ value="${build.dir}/torque.properties"
+/>
+</java>
+</target>
+
+
+<!-- ######################################################################
+		SQL data migration
+     ###################################################################### -->
+
+<target
+ name="datadump"
+ description="dump the existing SQL database into XML"
+ depends="load_properties"
+>
+<ant
+ antfile="build-torque.xml"
+ target="datadump"
+/>
+</target>
+
+
+<target
+ name="sqldump"
+ description="dump the existing SQL schema into XML"
+ depends="load_properties"
+>
+<ant
+ antfile="build-torque.xml"
+ target="jdbc"
+/>
+</target>
+
+
+</project>
+
+
+<!-- ######################################################################
+		developer notes
+     ######################################################################
+
+There are problems with Oracle and LOBs via JDBC - see fix by using
+patched "village-NNNN.jar":
+
+	http://sweb.uky.edu/~skkann2/village/
+
+
+There are problems with PostgreSQL 7.2 and later - see fix:
+
+	http://wiki.apache.org/db-torque/FrequentlyAskedQuestions#head-f57b43c59764361391115fc4d7a846602bdc60fa
+
+ 16. Why does the generated SQL fail with PostgreSQL?
+ 
+ The SQL generated for PostgreSQL using defaultIdMethod "native"
+ causes a problem with PostGreSQL 7.2 or higher:
+ 
+ For each autoIncrement primary key a CREATE SEQUENCE statement is
+ generated followed by the CREATE TABLE statement. The latter fails
+ because this version of PostgreSQL automatically creates a SEQUENCE
+ for each serial column. The table will not be created if the SEQUENCE
+ already exists.
+ 
+ Remove line 7 from the template sql\base\postgresql\table.vm
+ 	#if ($sequence.length()>0)$sequence#end
+
+ - Tarlika Elisabeth Schmitz
+
+PXN: We applied those mods to the Velocity templates in this embedded
+instance of Torque (06 Aug 2004).
+
+
+## cruft required by Torque for generation (not runtime):
+
+CLASSPATH=lib/ant-1.5.1.jar:$CLASSPATH
+CLASSPATH=lib/avalon-framework-4.1.4.jar:$CLASSPATH
+CLASSPATH=lib/jcs-20030822.182132.jar:$CLASSPATH
+CLASSPATH=lib/jdbc-2.0.jar:$CLASSPATH
+CLASSPATH=lib/jndi-1.2.1.jar:$CLASSPATH
+CLASSPATH=lib/junit-3.8.1.jar:$CLASSPATH
+CLASSPATH=lib/logkit-1.0.1.jar:$CLASSPATH
+CLASSPATH=lib/torque-gen-3.1.jar:$CLASSPATH
+CLASSPATH=lib/velocity-1.3.1.jar:$CLASSPATH
+CLASSPATH=lib/xmlParserAPIs-2.0.2.jar:$CLASSPATH
+
+
+## no longer needed:
+
+CLASSPATH=lib/xercesImpl-2.0.2.jar:$CLASSPATH
+
+     ###################################################################### -->
+

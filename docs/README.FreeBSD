@@ -1,0 +1,40 @@
+# Tested on FreeBSD 5.2
+
+# DEPENDENCIES
+
+Get an up-to-date ports tree and install:
+
+security/nmap
+security/snort
+security/openssl
+java/jdk14
+www/jakarta-tomcat5
+devel/apache-ant
+lang/perl5
+textproc/p5-XML-Parser
+
+perl dependencies.pl | tee dependencies.log
+
+Read dependencies.log for any version conflicts or missing packages.
+
+
+# ENVIRONMENT VARS #
+
+add to /root/.cshrc:
+
+setenv JAVA_HOME "/usr/local/jdk1.4.2"
+setenv ANT_HOME "/usr/local/ant"
+setenv CATALINA_HOME "/usr/local/jakarta-tomcat5.0"
+setenv PATH "${ANT_HOME}/bin:${JAVA_HOME}/bin:${PATH}"
+setenv CLASSPATH "$JAVA_HOME/lib/tools.jar"
+
+
+
+# base.properties
+
+make sure you've added a tomcat user/group
+
+make sure the path to openssl is correct (/usr/local/bin/openssl)
+and uncomment the line:
+os.name.fixor=FreeBSD
+

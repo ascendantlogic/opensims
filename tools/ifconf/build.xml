@@ -1,0 +1,364 @@
+<project
+ name="ifconf"
+ default="gen_config"
+ basedir="."
+>
+
+<!--
+@LICENSE@
+
+Paco NATHAN paco@symbiot.com
+ -->
+
+<description>
+$CVSId: build.xml,v 1.29 2004/10/18 04:38:15 paco Exp $
+$Id: build.xml 1 2008-01-10 18:37:05Z smoot $
+
+OpenSIMS - interface configuration (ifconfig)
+
+A typical target sequence for generating the config files would be:
+
+	ant -v install-opensims | tee install.txt
+
+</description>
+
+
+<!-- ######################################################################
+		global properties
+     ###################################################################### -->
+
+<property
+ name="build.dir"
+ location="${basedir}/../../build"
+/>
+<import
+ file="${build.dir}/properties.xml"
+/>
+<property
+ name="ifconf.properties"
+ value="${build.dir}/ifconf.properties"
+/>
+
+<property
+ name="opensims.java.dir"
+ location="${build.dir}/../java"
+/>
+
+<!--
+ the following supports a workaround for a bug in Java on FreeBSD
+ -->
+
+<property
+ name="os.name.fixor"
+ value="${os.name}"
+/>
+
+
+<!-- ######################################################################
+		classpath handling
+     ###################################################################### -->
+
+<import
+ file="${opensims.java.dir}/classpath.xml"
+/>
+
+<path
+ id="classpath"
+>
+<path
+ refid="opensims.classpath"
+/>
+</path>
+
+
+<!-- ######################################################################
+		parsing tasks
+     ###################################################################### -->
+
+<target
+ name="test_ifconf"
+ description="test whether the network properties file exists (i.e., have you run this before?)"
+>
+<available
+ file="${ifconf.properties}"
+ property="ifconf.present"
+/>
+</target>
+
+
+<target
+ name="parse"
+ description="parse the network config into a temp XML file"
+ unless="ifconf.present"
+>
+<chmod
+ file="${basedir}/ifconf.pl"
+ type="file"
+ perm="755"
+/>
+
+<exec
+ dir="${basedir}"
+ executable="${basedir}/ifconf.pl"
+ output="${ifconfig.file}"
+>
+<arg
+ value="${ifconfig}"
+/>
+<arg
+ value="${route}"
+/>
+<arg
+ value="${os.name.fixor}"
+/>
+<arg
+ value="${fqdn}"
+/>
+</exec>
+</target>
+
+
+<target
+ name="gen_build"
+ description="generate an ANT build script from the temp XML file"
+ depends="parse"
+ unless="ifconf.present"
+>
+<tempfile
+ property="prompt.xml"
+ destdir="${temp.dir}"
+ prefix="temp"
+ suffix=".xml"
+/>
+
+<xslt
+ in="${ifconfig.file}"
+ out="${prompt.xml}"
+ style="template/gen_build.xsl"
+ force="true"
+ reloadstylesheet="true"
+>
+<param
+ name="ifconf_properties"
+ expression="${ifconf.properties}"
+/>
+</xslt>
+</target>
+
+
+<target
+ name="run_build"
+ description="select the interface/network setting"
+ depends="gen_build"
+ unless="ifconf.present"
+>
+<ant
+ dir="${basedir}"
+ antfile="${prompt.xml}"
+/>
+<delete
+ file="${prompt.xml}"
+/>
+
+<property
+ file="${build.dir}/ifconf.properties"
+/>
+<echo
+ message="fully qualified domain name set to ${domain.name}"
+/>
+<echo
+ message="interface/network set to ${selected.interface}"
+/>
+</target>
+
+
+<target
+ name="fixor_host"
+ description="update the host dns/interface/network settings"
+ depends="run_build"
+ unless="ifconf.present"
+>
+<tempfile
+ property="provision.xml"
+ destdir="${temp.dir}"
+ prefix="temp"
+ suffix=".xml"
+/>
+
+<xslt
+ in="${ifconfig.file}"
+ out="${provision.xml}"
+ style="template/fixor_host.xsl"
+ force="true"
+ reloadstylesheet="true"
+>
+<param
+ name="domain_name"
+ expression="${domain.name}"
+/>
+<param
+ name="selected_interface"
+ expression="${selected.interface}"
+/>
+</xslt>
+
+<move
+ file="${provision.xml}"
+ tofile="${ifconfig.file}"
+/>
+</target>
+
+
+<target
+ name="gen_config"
+ description="generate an initial version of the XML configuration file for the webapp"
+ depends="classpath,test_ifconf,fixor_host"
+>
+<property
+ file="${ifconf.properties}"
+/>
+
+<tempfile
+ property="provision.xsl"
+ destdir="${temp.dir}"
+ prefix="temp"
+ suffix=".xsl"
+/>
+<copy
+ file="template/webapp_config.xsl"
+ tofile="${provision.xsl}"
+ overwrite="true"
+/>
+
+<replace
+ file="${provision.xsl}"
+>
+<replacefilter
+ token="@WEBAPP.DIR@"
+ value="${webapp.dir}"
+/>
+<replacefilter
+ token="@VAR.LIB@"
+ value="${var.lib}"
+/>
+<replacefilter
+ token="@TEMP.DIR@"
+ value="${temp.dir}"
+/>
+<replacefilter
+ token="@OPENSIMS.HOME@"
+ value="${opensims.home}"
+/>
+<replacefilter
+ token="@SUBSCRIBER.PORT@"
+ value="${subscriber.port}"
+/>
+<replacefilter
+ token="@INTF.NAME@"
+ value="${selected.interface}"
+/>
+<replacefilter
+ token="@SNORT.LOG@"
+ value="${snort.log}"
+/>
+<replacefilter
+ token="@GEOIP.HOME@"
+ value="${geoip.home}"
+/>
+<replacefilter
+ token="@NAGIOS.LOG@"
+ value="${geoip.home}"
+/>
+<replacefilter
+ token="@TRUSTSTORE@"
+ value="${truststore}"
+/>
+<replacefilter
+ token="@TRUSTSTORE.PASS@"
+ value="${truststore.pass}"
+/>
+<replacefilter
+ token="@KEYSTORE@"
+ value="${keystore}"
+/>
+<replacefilter
+ token="@KEYSTORE.PASS@"
+ value="${keystore.pass}"
+/>
+<replacefilter
+ token="@GPG.HOME@"
+ value="${gpg.home}"
+/>
+<replacefilter
+ token="@REPOSITORY.EMAIL@"
+ value="${repository.email}"
+/>
+<replacefilter
+ token="@REPOSITORY.URL@"
+ value="${repository.url}"
+/>
+<replacefilter
+ token="@REPOSITORY.USER@"
+ value="${repository.user}"
+/>
+<replacefilter
+ token="@REPOSITORY.PASSWORD@"
+ value="${repository.password}"
+/>
+</replace>
+
+<tempfile
+ property="provision.xml"
+ destdir="${temp.dir}"
+ prefix="temp"
+ suffix=".xml"
+/>
+<xslt
+ in="${ifconfig.file}"
+ out="${provision.xml}"
+ style="${provision.xsl}"
+ force="true"
+ reloadstylesheet="true"
+/>
+<delete
+ file="${provision.xsl}"
+/>
+</target>
+
+
+<target
+ name="config"
+ description="generate and install an XML configuration file for the webapp"
+ depends="gen_config"
+>
+<chmod
+ file="${provision.xml}"
+ type="file"
+ perm="0644"
+/>
+<chown
+ file="${provision.xml}"
+ type="file"
+ owner="${super.user}"
+/>
+<chgrp
+ file="${provision.xml}"
+ type="file"
+ group="${super.group}"
+/>
+
+<move
+ file="${provision.xml}"
+ tofile="${webapp.config}"
+/>
+</target>
+
+
+<target
+ name="install-opensims"
+ description="top-level target for installing an OpenSIMS distribution"
+ depends="config"
+/>
+
+
+</project>

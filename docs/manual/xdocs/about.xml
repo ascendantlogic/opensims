@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<properties>
+<title>About</title>
+<author
+ email="paco@symbiot.com"
+>Paco NATHAN</author>
+</properties>
+
+<body>
+
+<section
+ name="FAQ"
+>
+<p>
+
+Check our
+
+<a
+ href="http://opensims.org/faq.html"
+>FAQ</a>
+
+for more details.
+
+</p>
+<p>
+
+And yes, the clownfish has a name ... his name is <code>Omen</code>.
+
+He plays just fine in amongst the stingy tentacles.
+
+</p>
+<p>
+
+And to confirm the rumors, yes most of this code was written on <i>Mac
+OS X</i> and <i>Gentoo</i>.
+
+</p>
+</section>
+
+</body>
+</document>

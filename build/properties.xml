@@ -1,0 +1,143 @@
+<project
+ name="properties"
+ basedir="."
+ default="env"
+>
+
+<!--
+@LICENSE@
+
+Paco NATHAN paco@symbiot.com
+ -->
+
+<description>
+$CVSId: properties.xml,v 1.5 2004/10/21 18:31:08 paco Exp $
+$Id: properties.xml 14 2008-03-03 18:30:21Z smoot $
+
+OpenSIMS - shared properties
+
+This file is expected to be imported by other Ant build scripts which
+use any of the shared properties, to coordinate shared dependencies on
+the specific point-release versions of the included third-party JAR
+files.
+
+</description>
+
+
+<!-- ######################################################################
+		shared properties
+     ###################################################################### -->
+
+<dirname
+ property="imported.basedir"
+ file="${ant.file.properties}"
+/>
+
+<property
+ environment="env"
+/> 
+<property
+ file="${imported.basedir}/build.properties"
+/>
+<property
+ file="${imported.basedir}/default.properties"
+/>
+<property
+ file="${imported.basedir}/release.properties"
+/>
+
+
+<!-- ######################################################################
+		install tasks
+     ###################################################################### -->
+
+<target
+ name="test"
+ description="test whether the build properties file exists (i.e., have you installed OpenSIMS previously?)"
+>
+<available
+ file="${imported.basedir}/build.properties"
+ property="properties.present"
+/>
+</target>
+
+
+<target
+ name="init"
+ description="initialize the build properties file"
+ depends="test"
+ unless="properties.present"
+>
+<dirname
+ property="temp.home.dir"
+ file="${imported.basedir}/../build.xml"
+/>
+
+<echo
+ file="${imported.basedir}/build.properties"
+>
+######################################################################
+#
+# HERE ARE PROPERTIES WHICH YOU MAY NEED TO EDIT for each OpenSIMS:
+#
+
+fqdn=${env.HOSTNAME}
+opensims.home=${temp.home.dir}
+
+# select from one of the currently support database platforms:
+# 	postgresql, mysql, oracle
+#
+# this can also be adapted for:
+# 	axion, cloudscape (derby), db2, db2400, hypersonic, 
+#	interbase, mssql, sapdb, sybase
+
+#db.platform = DATABASE
+#db.jdbc.driver = JDBC_DRIVER_CLASSNAME
+#db.jdbc.jar = /PATH/TO/REQUIRED/JDBC/DRIVER/foobar.jar
+#db.user = foo
+#db.password = bar
+
+# for example:
+#
+#db.platform = postgresql
+#db.jdbc.driver = org.postgresql.Driver
+#db.jdbc.jar = /opt/postgresql-7.4.3/lib/pg74.215.jdbc3.jar
+#db.user = postgres
+#db.password = yB.0r4cl3
+
+# uncomment and edit this property if Java has troubles detecting your
+# operating system correctly, e.g. sometimes on FreeBSD... which
+# should be pretty much the same values as shown at:
+# 	http://lopica.sourceforge.net/os.html
+
+#os.name.fixor=MY_REAL_OS_NAME
+
+# other libraries required for source code developers, in which case 
+# these may need to be downloaded and installed
+
+#findbugs.home=/opt/findbugs-0.8.5
+#smack.jar=/opt/smack-1.3.0/smack.jar
+#informa.jar=/opt/informa-0.5.5/lib/informa.jar
+
+
+######################################################################
+#
+# THE REMAINING PROPERTIES ARE PRE-CONFIGURED FOR Gentoo/Fedora/RedHat
+# ... edit them as needed for your operating system
+#
+
+# NOTE: whatever you define here will override the similar entries in
+# "default.properties"
+</echo>
+</target>
+
+
+<target
+ name="env"
+ description="show the environment variables and properties settings"
+>
+<echoproperties/>
+</target>
+
+
+</project>

@@ -1,0 +1,930 @@
+<project
+ name="OpenSIMS"
+ default="preflight"
+ basedir="."
+>
+
+<!--
+@LICENSE@
+
+Mike W. ERWIN mikee@symbiot.com
+Jamie PUGH jamie@symbiot.com
+Paco NATHAN paco@symbiot.com
+Jim NASBY jnasby@symbiot.com
+Matt BRADBURY bradbury@symbiot.com
+
+ -->
+
+<description>
+$CVSId: build.xml,v 1.72 2006/05/28 22:33:42 mikee Exp $
+$Id: build.xml 14 2008-03-03 18:30:21Z smoot $
+
+OpenSIMS, AgentSDK - system build script
+
+A good thing to try first would be the "preflight" test, which is the
+default target:
+
+	ant
+
+For the initial install on a system, first run:
+
+	ant -v init
+
+After that, a typical installation target sequence would be:
+
+	ant -v install | tee install.txt
+
+</description>
+
+
+<!-- ######################################################################
+		global properties
+     ###################################################################### -->
+
+<property
+ name="build.dir"
+ location="build"
+/>
+<import
+ file="${build.dir}/properties.xml"
+/>
+
+
+<!-- ######################################################################
+		installer tasks
+     ###################################################################### -->
+
+<target
+ name="init"
+ description="configure for initial installation of OpenSIMS"
+ depends="env"
+>
+<ant
+ dir="build"
+ antfile="${build.dir}/properties.xml"
+ target="init"
+/>
+</target>
+
+
+<target
+ name="build_layout"
+ description="make sure that the directory layout is setup correctly"
+>
+<mkdir
+ dir="${config.basedir}"
+/>
+<mkdir
+ dir="${config.basedir}/certs"
+/>
+<mkdir
+ dir="${log.dir}"
+/>
+<mkdir
+ dir="${var.lib}"
+/>
+<mkdir
+ dir="${opensims.home}"
+/>
+<mkdir
+ dir="${opensims.home}/webapp"
+/>
+<mkdir
+ dir="${var.lib}/updates"
+/>
+<mkdir
+ dir="${webapp.dir}"
+/>
+</target>
+
+
+<target
+ name="set_perms"
+ description="make sure that file permissions are set appropriately"
+>
+<chmod
+ dir="${config.basedir}"
+ type="dir"
+ perm="0755"
+/>
+<chown
+ file="${config.basedir}"
+ type="dir"
+ owner="${super.user}"
+/>
+<chgrp
+ file="${config.basedir}"
+ type="dir"
+ group="${super.group}"
+/>
+
+<chmod
+ dir="${config.basedir}/certs"
+ type="dir"
+ perm="0755"
+/>
+<chown
+ file="${config.basedir}/certs"
+ type="dir"
+ owner="${super.user}"
+/>
+<chgrp
+ file="${config.basedir}/certs"
+ type="dir"
+ group="${super.group}"
+/>
+
+<chmod
+ dir="${log.dir}"
+ type="dir"
+ perm="0770"
+/>
+<chown
+ file="${log.dir}"
+ type="dir"
+ owner="${webapp.user}"
+/>
+<chgrp
+ file="${log.dir}"
+ type="dir"
+ group="${webapp.group}"
+/>
+
+<chmod
+ dir="${var.lib}"
+ type="dir"
+ perm="0770"
+/>
+<chown
+ file="${var.lib}"
+ type="dir"
+ owner="${webapp.user}"
+/>
+<chgrp
+ file="${var.lib}"
+ type="dir"
+ group="${webapp.group}"
+/>
+
+<chmod
+ dir="${var.lib}/updates"
+ type="dir"
+ perm="0770"
+/>
+<chown
+ file="${var.lib}/updates"
+ type="dir"
+ owner="${webapp.user}"
+/>
+<chgrp
+ file="${var.lib}/updates"
+ type="dir"
+ group="${webapp.group}"
+/>
+
+<chmod
+ dir="${webapp.dir}"
+ type="dir"
+ perm="0775"
+/>
+<chown
+ file="${webapp.dir}"
+ type="dir"
+ owner="${webapp.user}"
+/>
+<chgrp
+ file="${webapp.dir}"
+ type="dir"
+ group="${webapp.group}"
+/>
+
+<ant
+ dir="agent"
+ target="set_perms"
+/>
+<ant
+ dir="tools/depend"
+ target="set_perms"
+/>
+
+<chmod
+ file="${basedir}/tools/ifconf/ifconf.pl"
+ perm="0775"
+/>
+<chmod
+ file="${basedir}/tools/nagios/write_configs.pl"
+ perm="0775"
+/>
+<chmod
+ file="${basedir}/tools/snort/parse_snortrules.pl"
+ perm="0775"
+/>
+<chmod
+ file="${basedir}/tools/voyeur/voyeur.pl"
+ perm="0775"
+/>
+</target>
+
+
+<target
+ name="preflight"
+ description="run the dependencies checking"
+>
+<echoproperties/>
+
+<ant
+ dir="tools/depend"
+ target="preflight"
+/>
+
+<ant
+ dir="tools/snort"
+ target="preflight"
+/>
+
+<ant
+ dir="tools/torque"
+ target="preflight"
+/>
+
+<ant
+ dir="webapp"
+ target="preflight"
+/>
+</target>
+
+
+<target
+ name="prompt_send_email"
+ description="prompt for whether to email to OpenSIMS.org when install completes"
+>
+<input
+ addproperty="okay.send.email"
+ validargs="yes,no"
+>
+
+Congrads, your OpenSIMS installation has completed.  The last remaining
+step is optional, but probably worth considering ...
+
+Would you like to send email to OpenSIMS.org, requesting that your
+Certificate Signing Request (CSR) get signed?  
+
+If you answer "no", the build finishes.
+
+If you answer "yes", then a copy of your CSR will be mailed to
+info@opensims.org along with your domain name and OS platform.  No
+other information will be transmitted.
+
+In return, you will receive back a signed certificate, which can be
+used with secure web services (mutual authentication) to receive
+secure notifications of upgraded project source code and revised data
+about security infrastructure management.
+
+Sending this email is entirely optional, and if you want to find out
+more info about registering OpenSIMS, check the web page at:
+
+	http://opensims.org/register.html
+
+</input>
+</target>
+
+
+<target
+ name="register"
+ description="send email to OpenSIMS, to register for CSR signing by repository"
+ depends="prompt_send_email"
+ if="okay.send.email"
+>
+<property
+ file="${build.dir}/keymgr.properties"
+/>
+
+<tempfile
+ property="message.txt"
+ destdir="${temp.dir}"
+ prefix="temp"
+ suffix=".txt"
+/>
+
+<concat
+ destfile="${message.txt}"
+>
+<path>
+<pathelement
+ location="${var.lib}/${fqdn}.req.pem"
+/>
+</path>
+</concat>
+
+<mail
+ tolist="info@opensims.org"
+ from="${dname.email.addr}"
+ subject="installed ${build.tag} ver ${build.version} os ${os.name} dns ${fqdn} org ${dname.org.name}"
+ failonerror="false"
+>
+<message
+ src="${message.txt}"
+ mimetype="text/plain"
+/>
+</mail>
+
+<delete
+ file="${message.txt}"
+/>
+</target>
+
+
+<target
+ name="clean_model"
+ description="remove any preexisting network model"
+>
+<delete>
+<fileset
+ dir="${var.lib}"
+ includes="**/*.model.*"
+/>
+</delete>
+</target>
+
+
+<target
+ name="install"
+ description="initial installation of OpenSIMS and AgentSDK"
+ depends="env,build_layout,set_perms,clean_model"
+>
+<ant
+ dir="tools/keymgr"
+ target="install-opensims"
+/>
+<ant
+ dir="tools/ifconf"
+ target="install-opensims"
+/>
+<ant
+ dir="tools/lingo"
+ target="install-opensims"
+/>
+<ant
+ dir="tools/torque"
+ target="install-opensims"
+/>
+<ant
+ dir="tools/snort"
+ target="install-opensims"
+/>
+<ant
+ dir="agent"
+ target="install-opensims"
+/>
+<ant
+ dir="webapp"
+ target="install-opensims"
+/>
+
+<antcall
+ target="register"
+ inheritRefs="true"
+/>
+</target>
+
+
+<!-- ######################################################################
+		build tasks
+     ###################################################################### -->
+
+<target
+ name="get_timestamp"
+ description="construct a timestamp for the current year/month/day/hour/minute"
+>
+<tstamp>
+<format
+ property="build.time"
+ pattern="yyyyMMddHHmm"
+ unit="minute"
+/>
+</tstamp>
+
+<echo
+ message="building at ${build.time}"
+/>
+</target>
+
+
+<target
+ name="set_timestamp"
+ description="update the release.properties settings for the current release candidate"
+ depends="get_timestamp"
+>
+<propertyfile
+ file="${build.dir}/release.properties"
+ CVScomment="OpenSIMS/AgentSDK/Ceteri $CVSId: build.xml,v 1.72 2006/05/28 22:33:42 mikee Exp $"
+ comment="OpenSIMS/AgentSDK/Ceteri $Id: build.xml 14 2008-03-03 18:30:21Z smoot $"
+>
+<entry
+ key="build.tag"
+ type="string"
+ value="opensims_${build.time}"
+/>
+<entry
+ key="build.number"
+ type="int"
+ operation="+"
+ default="0000"
+ pattern="0000"
+/>
+</propertyfile>
+
+<echo
+ message="updating the build tag from ${build.tag} to ${build.time}"
+/>
+</target>
+
+
+<target
+ name="fetch"
+ description="get the latest source from the CVS tree"
+>
+<!--
+<cvs
+ cvsRoot="${env.CVSROOT}"
+ dest="${basedir}"
+ failonerror='true'
+>
+<commandline>
+<argument
+ value="up"
+/>
+</commandline>
+</cvs>
+-->
+
+</target>
+
+
+<target
+ name="clean"
+ description="clean the build directories for OpenSIMS and AgentSDK"
+>
+<delete
+ includeEmptyDirs="true"
+ quiet="true"
+>
+<fileset
+ dir="${basedir}"
+ includes="**/*~"
+ defaultExcludes="no"
+/>
+<fileset
+ dir="${basedir}"
+ includes="**/install.txt"
+/>
+</delete>
+
+<ant
+ dir="agent"
+ target="clean"
+/>
+<ant
+ dir="webapp"
+ target="clean"
+/>
+</target>
+
+
+<target
+ name="publish"
+ description="generate a release candidate tarball and publish it on the open source web site"
+>
+<!-- make sure we have the latest code built and documented -->
+
+<ant
+ dir="webapp"
+ target="build"
+/>
+<ant
+ dir="webapp"
+ target="javadoc"
+/>
+<!--
+<ant
+ dir="webapp"
+ target="findbugs"
+/>
+<ant
+ dir="webapp"
+ target="sloccount"
+/>
+-->
+
+<!-- create a temp directory in which to organize the distribution -->
+
+<tempfile
+ property="temp.build"
+ destdir="${temp.dir}"
+ prefix="build"
+/>
+<mkdir
+ dir="${temp.build}"
+/>
+
+<property
+ name="build.tarball"
+ value="${temp.build}/${build.tag}.tar"
+/>
+<property
+ name="build.zip"
+ value="${temp.build}/${build.tag}.zip"
+/>
+<loadfile
+ property="build.license"
+ srcFile="${basedir}/LICENSE"
+/>
+
+<property
+ name="build.archive"
+ value="${build.tag}.tar.gz"
+/>
+<property
+ name="build.html"
+ value="${build.tag}.html"
+/>
+<property
+ name="release.url"
+ value="http://opensims.org"
+/>
+
+<!-- copy the distribution files, filter for excludes, add the license -->
+
+<copy
+ todir="${temp.build}"
+>
+<fileset
+ dir=".."
+>
+<include
+ name="opensims/**"
+/>
+<exclude
+ name="opensims/build/build.properties"
+/>
+<exclude
+ name="opensims/build/keymgr.properties"
+/>
+<exclude
+ name="opensims/build/ifconf.properties"
+/>
+<exclude
+ name="opensims/build/torque.properties"
+/>
+<exclude
+ name="opensims/build/depends.txt"
+/>
+<exclude
+ name="opensims/build/connect.txt"
+/>
+<exclude
+ name="**/CVS"
+/>
+<exclude
+ name="**/install.txt"
+/>
+<exclude
+ name="**/*.a"
+/>
+<exclude
+ name="**/*.class"
+/>
+<exclude
+ name="**/*.cvsignore"
+/>
+<exclude
+ name="**/*.la"
+/>
+<exclude
+ name="**/*.lai"
+/>
+<exclude
+ name="**/*.libs"
+/>
+<exclude
+ name="**/*.lo"
+/>
+<exclude
+ name="**/*.o"
+/>
+<exclude
+ name="**/*.old"
+/>
+<exclude
+ name="**/*~"
+/>
+</fileset>
+
+<filterset>
+<filter
+ token="LICENSE"
+ value="${build.license}build tag: ${build.tag}"
+/>
+</filterset>
+</copy>
+
+<!-- copy the binaries, specially without token filter -->
+
+<copy
+ todir="${temp.build}"
+ overwrite="true"
+>
+<fileset
+ dir=".."
+>
+<include
+ name="opensims/build/opensims.war"
+/>
+<include
+ name="opensims/docs/**"
+/>
+<include
+ name="opensims/flash/**/*.fla"
+/>
+<include
+ name="opensims/flash/**/*.swf"
+/>
+<include
+ name="opensims/java/lib/**"
+/>
+<include
+ name="opensims/tools/keymgr/template/truststore.jks"
+/>
+<include
+ name="opensims/tools/torque/lib/**"
+/>
+</fileset>
+</copy>
+
+<!-- create the various archive formats -->
+
+<tar
+ destfile="${build.tarball}"
+ basedir="${temp.build}"
+ includes="opensims/**"
+/>
+<gzip
+ src="${build.tarball}"
+ destfile="${build.tarball}.gz"
+/>
+<checksum
+ file="${build.tarball}.gz"
+/>
+
+<!--
+<bzip2
+ src="${build.tarball}"
+ destfile="${build.tarball}.bz2"
+/>
+<zip
+ destfile="${build.zip}"
+ basedir="${temp.build}"
+ includes="opensims/**"
+/>
+-->
+
+<!-- initial clean up -->
+
+<delete
+ dir="${temp.build}/opensims"
+/>
+<delete
+ file="${build.tarball}"
+/>
+
+<!-- sign with GnuPG -->
+
+<exec
+ dir="${temp.build}"
+ executable="gpg"
+>
+<arg
+ value="--detach-sign"
+/>
+<arg
+ value="-a"
+/>
+<arg
+ value="${build.archive}"
+/>
+</exec>
+
+<!-- grab the GPG sign, MD5 hash, and release notes -->
+
+<loadfile
+ property="build.blurb"
+ srcFile="${build.dir}/latest.html"
+/>
+
+<loadfile
+ property="build.gpg"
+ srcFile="${temp.build}/${build.archive}.asc"
+/>
+
+<loadfile
+ property="build.md5"
+ srcFile="${temp.build}/${build.archive}.MD5"
+/>
+
+<!-- mark time -->
+
+<tstamp>
+<format
+ property="build.timestamp"
+ pattern="yyyy-MM-dd HH:mm"
+ timezone="GMT"
+/>
+</tstamp>
+
+<!-- create the HTML fragment -->
+
+<copy
+ file="${build.dir}/release.html"
+ tofile="${temp.build}/${build.html}"
+ overwrite="true"
+/>
+
+<replace
+ file="${temp.build}/${build.html}"
+>
+<replacefilter
+ token="@BUILD.ARCHIVE@"
+ value="${build.archive}"
+/>
+<replacefilter
+ token="@BUILD.BLURB@"
+ value="${build.blurb}"
+/>
+<replacefilter
+ token="@BUILD.GPG@"
+ value="${build.gpg}"
+/>
+<replacefilter
+ token="@BUILD.MD5@"
+ value="${build.md5}"
+/>
+<replacefilter
+ token="@BUILD.NUMBER@"
+ value="${build.number}"
+/>
+<replacefilter
+ token="@BUILD.TIMESTAMP@"
+ value="${build.timestamp}"
+/>
+<replacefilter
+ token="@BUILD.VERSION@"
+ value="${build.version}"
+/>
+</replace>
+
+<!-- set up the file layout for release -->
+
+<mkdir
+ dir="${temp.build}/docs"
+/>
+<mkdir
+ dir="${temp.build}/src"
+/>
+<mkdir
+ dir="${temp.build}/src/archive"
+/>
+<mkdir
+ dir="${temp.build}/src/mirror"
+/>
+
+<!-- swap the download links -->
+
+<copy
+ file="${temp.build}/${build.html}"
+ tofile="${temp.build}/src/mirror/release_NEXT.html"
+ overwrite="true"
+/>
+
+<!-- copy the latest documentation -->
+
+<copy
+ todir="${temp.build}"
+ file="README"
+ overwrite="true"
+/>
+
+<copy
+ todir="${temp.build}/docs"
+>
+<fileset
+ dir="docs"
+>
+<include
+ name="README*"
+/>
+<include
+ name="javadoc/**/*"
+/>
+<include
+ name="torque/*"
+/>
+<include
+ name="images/logo.jpg"
+/>
+<include
+ name="pdf/**/*.*"
+/>
+<include
+ name="qa/**/*.*"
+/>
+</fileset>
+</copy>
+
+<mkdir
+ dir="${temp.build}/docs/manual"
+/>
+<exec
+ dir="${basedir}/docs/manual"
+ executable="ant"
+>
+<arg
+ value="-Ddocs.manual.dst=${temp.build}/docs/manual"
+/>
+</exec>
+
+<!-- move the release files for mirror site rsync -->
+
+<move
+ todir="${temp.build}/src/archive"
+>
+<fileset
+ dir="${temp.build}"
+>
+<include
+ name="${build.tag}.*"
+/>
+</fileset>
+</move>
+
+<!-- fix the file perms -->
+
+<chmod
+ perm="g+w"
+>
+<fileset
+ dir="${temp.build}"
+/>
+</chmod>
+
+<chgrp
+ group="opensims"
+>
+<fileset
+ dir="${temp.build}"
+/>
+</chgrp>
+
+<!-- tar up and scp over to populate the project download site -->
+
+<tar
+ destfile="${temp.build}.tar"
+ basedir="${temp.build}"
+ includes="**/*"
+/>
+<gzip
+ src="${temp.build}.tar"
+ destfile="${temp.build}.tar.gz"
+/>
+
+<!--
+<exec
+ dir="${temp.build}"
+ executable="scp"
+>
+<arg
+ value="${temp.build}.tar.gz"
+/>
+<arg
+ value="ash:"
+/>
+</exec>
+-->
+
+<!-- clean up -->
+
+<!--
+<delete
+ file="${temp.build}.tar.gz"
+/>
+<delete
+ file="${temp.build}.tar"
+/>
+<delete
+ dir="${temp.build}"
+/>
+-->
+
+</target>
+
+
+</project>

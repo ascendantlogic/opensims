@@ -1,0 +1,48 @@
+<project
+ name="report"
+ default="render"
+ basedir="."
+>
+<description>
+$CVSId: build.xml,v 1.4 2004/09/16 15:50:46 paco Exp $
+$Id: build.xml 1 2008-01-10 18:37:05Z smoot $
+Paco NATHAN paco@symbiot.com
+
+OpenSIMS - report test rig
+
+Testing XSL style sheets on example XML content to render reports.
+
+A typical use for testing report generation would be:
+
+	ant -Dxsl_file=../../webapp/xsl/rpt_attacker_profile.xsl ; more out.html
+
+</description>
+
+<property
+ name="in_file"
+ value="in.xml"
+/>
+<property
+ name="out_file"
+ value="out.html"
+/>
+<property
+ name="xsl_file"
+ value="../../webapp/xsl/rpt_incident.xsl"
+/>
+
+
+<target
+ name="render"
+ description="run the test rig"
+>
+<xslt
+ in="${in_file}"
+ out="${out_file}"
+ style="${xsl_file}"
+ force="true"
+ reloadstylesheet="true"
+/>
+</target>
+
+</project>

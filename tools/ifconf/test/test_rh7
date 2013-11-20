@@ -1,0 +1,41 @@
+#!/usr/bin/perl
+
+print 'eth0      Link encap:Ethernet  HWaddr 00:E0:29:19:5D:92  
+          inet addr:172.16.129.1  Bcast:172.16.129.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1442893 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:1575446 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:527 txqueuelen:100 
+          Interrupt:5 Base address:0x220 
+
+eth1      Link encap:Ethernet  HWaddr 00:60:97:9C:7D:9E  
+          inet addr:68.201.169.249  Bcast:255.255.255.255  Mask:255.255.240.0
+          UP BROADCAST NOTRAILERS RUNNING  MTU:1500  Metric:1
+          RX packets:401928181 errors:43 dropped:0 overruns:0 frame:43
+          TX packets:25294684 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:53066 txqueuelen:100 
+          Interrupt:11 Base address:0xef00 
+
+eth2      Link encap:Ethernet  HWaddr 00:00:F4:C3:C6:3D  
+          inet addr:192.168.1.1  Bcast:192.168.1.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:24465238 errors:1 dropped:0 overruns:0 frame:2
+          TX packets:26081755 errors:74 dropped:0 overruns:0 carrier:74
+          collisions:149733 txqueuelen:100 
+          Interrupt:10 Base address:0xef80 
+
+ipsec0    Link encap:Ethernet  HWaddr 00:60:97:9C:7D:9E  
+          inet addr:68.201.169.249  Mask:255.255.240.0
+          UP RUNNING NOARP  MTU:16260  Metric:1
+          RX packets:1794606 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:1254286 errors:0 dropped:66 overruns:0 carrier:0
+          collisions:0 txqueuelen:10 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:6568 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6568 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+
+';

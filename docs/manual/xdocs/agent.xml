@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<properties>
+<title>HOWTO: AgentSDK</title>
+<author
+ email="dan@bti.net"
+>Dan CAMPER</author>
+</properties>
+
+<body>
+
+<section
+ name="How to Build and Install the AgentSDK"
+>
+<p>
+
+To compile the <i>AgentSDK</i>, first connect to its home directory:
+
+</p>
+<blockquote>
+<code>
+
+    PATH-TO/opensims/agent
+
+</code>
+</blockquote>
+<p>
+
+Then run the <i>Ant</i> build script:
+
+</p>
+<blockquote>
+<code>
+
+	ant -v clean configure | tee install.txt
+
+</code>
+</blockquote>
+<p>
+
+From that, a shell script named <code>Build.sh</code> gets generated.
+
+That script automates the configure/compile/install process for
+<i>libsymbiot</i> and the following agents and plugins:
+
+</p>
+<ul>
+
+<li>
+    symagent
+</li>
+<li>
+    symplugin-effector
+</li>
+<li>
+    symplugin-log-watcher
+</li>
+<li>
+    symplugin-mac-lookup
+</li>
+<li>
+    symplugin-network
+</li>
+<li>
+    symplugin-nmap
+</li>
+<li>
+    symplugin-processes
+</li>
+<li>
+    symplugin-snort-log
+</li>
+<li>
+    symplugin-tester
+</li>
+
+</ul>
+<p>
+
+The script contains some interesting variables at the top to govern
+portions of the installation process, in the makefiles throughout the
+sub-directories.
+
+Those variables are:
+
+</p>
+<dl>
+
+<dt>
+<code>LIB_INSTALL_DIR</code>
+</dt>
+<dd>
+<p>
+
+The base directory for the installed <i>libsymbiot</i> files.
+
+The shared library will installed into <code>DIR/lib</code> and the
+header files will be installed into <code>DIR/include</code>.
+
+</p>
+</dd>
+
+<dt>
+<code>AGENT_INSTALL_DIR</code>
+</dt>
+<dd>
+<p>
+
+The base directory for the installed agent binary applications.
+
+The actual directory is <code>DIR/bin</code>.
+
+</p>
+</dd>
+
+<dt>
+<code>CONF_DIR</code>
+</dt>
+<dd>
+<p>
+
+The base directory that will contain agent configuration files.
+
+</p>
+</dd>
+
+<dt>
+<code>LOG_DIR</code>
+</dt>
+<dd>
+<p>
+
+The base directory that will contain agent log files.
+
+</p>
+</dd>
+
+<dt>
+<code>SERVERNAME</code>
+</dt>
+<dd>
+<p>
+
+The network name or IP address of the <i>OpenSIMS</i> appliance/server
+(as it resolves from inside its DMZ).
+
+</p>
+</dd>
+
+<dt>
+<code>INSTALL_STARTUP_SCRIPTS</code>
+</dt>
+<dd>
+<p>
+     
+May be either <code>1</code> or <code>0</code>.  
+
+If <code>1</code>, the top-level build script calls <code>make
+install-startup-script</code> within the agent projects in order to
+install startup script into the system startup directory.
+
+This install requires that the system startup directory already
+exists.
+
+</p>
+</dd>
+
+</dl>
+<p>
+
+To change any of the above variables, simply edit the
+<code>Build.sh</code> file.
+
+<cite>
+[ NB: Sure, once the <i>Ant</i> scripts have generated it. ]
+</cite>
+
+</p>
+<p>
+
+Note that, in general, <i>libsymbiot</i> must be built and installed
+before any of the agents can be configured.
+
+The reason for this lies with library search directories in place
+during the compilation stage -- basically, we have to build against
+the library's final location.
+
+</p>
+<p>
+
+Executing the script without modifying any of the controlling
+variables will result in the following items new items:
+
+</p>
+<code>
+<pre>
+
+    /usr/local/lib/
+        libsymbiot.la
+        libsymbiot.so -&gt; libsymbiot.so.0.1.0
+        libsymbiot.so.1 -&gt; libsymbiot.so.0.1.0
+        libsymbiot.so.0.1.0
+
+    /usr/local/include/
+        symlib-api.h
+        symlib-defs.h
+        symlib-exception.h
+        symlib-message.h
+        symlib-mutex.h
+        symlib-task-queue.h
+        symlib-tasks.h
+
+    /usr/local/bin/
+        symagent
+        symagent-plugins
+
+    /etc/init.d/
+        symagent
+
+    /var/log/opensims/
+        symagent_error_log.txt      &lt;-- created only when needed
+        symagent_message_log.txt    &lt;-- created only when needed
+
+</pre>
+</code>
+<p>
+
+You may run the <code>Build.sh</code> script directly from the command
+line, or automatically invoked via <i>Ant</i>:
+
+</p>
+<blockquote>
+<code>
+
+	ant -v build | tee install.txt
+
+</code>
+</blockquote>
+<p>
+
+TROUBLESHOOT:
+
+The startup scripts installed for <i>Linux</i> are not automatically
+setup to execute on system restart.
+
+On most <i>Linux</i> systems, use the <code>chkconfig(8)</code>
+utility to activate these scripts for the boot process.
+
+Because they all require an active network, be sure to make them
+startup relatively late.
+
+For local agents, it is probably best to have them startup after the
+application server (e.g. <i>Tomcat</i>) starts.
+
+</p>
+</section>
+
+<section
+ name="How to Debug the AgentSDK"
+>
+<p>
+
+Start the agent executable directly (not as a service) with the
+special command-line option:
+
+</p>
+<blockquote>
+<code>
+
+	/usr/local/bin/symagent --enable-comm-logging start
+
+</code>
+</blockquote>
+<p>
+
+That's it.
+
+By tailing the error and message log files, you should now be able to
+see the agent talking to the server.
+
+</p>
+</section>
+
+</body>
+</document>

@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<properties>
+<title>Dependencies</title>
+<author
+ email="paco@symbiot.com"
+>Paco NATHAN</author>
+</properties>
+
+<body>
+
+<section
+ name="System Integration"
+>
+<p>
+
+It pays to keep in mind that intelligent security infrastructure
+management is largely a systems integration problem; the acronym
+"SIMS" begins with the letters "SI" for good reason.
+
+A detailed view of the dependencies on other open source projects 
+for building, testing, and running <i>OpenSIMS</i> is given in
+this
+
+<a
+ href="http://opensims.org/docs/pdf/ceteri_depends.pdf"
+ target="_blank"
+>chart</a>,
+
+color-coded according to the licensing category for each project.
+
+</p>
+<p>
+
+Consequently, it is expected that the <i>OpenSIMS</i> operators will
+have plenty of experience as system administrators, integrating many
+different open source systems.
+
+The total time required for an <i>OpenSIMS</i> installation on a bare
+but already networked <i>RedHat</i> box is expected to be about an
+hour, once you have these dependencies in place.
+
+</p>
+<p>
+
+TROUBLESHOOT:
+
+For now, it is probably best to download and compile the dependencies
+from source, rather than relying on RPMs, which in our experience tend
+to be significantly out of date.
+
+</p>
+</section>
+
+<section
+ name="Open Source Projects Required For Install/Runtime"
+>
+<p>
+
+To install this release of <i>OpenSIMS</i>, it is assumed that you already
+have the following installed and running:
+
+</p>
+<ul>
+
+<li>
+<p>
+<i>gcc</i>
+<br/>
+version: 3.3.2 or later
+<br/>
+<a
+ href="http://gcc.gnu.org/"
+ target="_blank"
+>http://gcc.gnu.org/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>openssl</i>
+<br/>
+version: 0.9.7d or later
+<br/>
+<a
+ href="http://www.openssl.org/"
+ target="_blank"
+>http://www.openssl.org/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>Perl</i>
+<br/>
+version: 5.8.x or later
+<br/>
+<a
+ href="http://www.perl.org/"
+ target="_blank"
+>http://www.perl.org/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>Perl</i> packages
+<br/>
+<ul>
+<li>
+<code>Getopt::Std</code>
+</li>
+<li>
+<code>HTML::Entities</code>
+</li>
+</ul>
+<br/>
+<a
+ href="http://www.cpan.org/"
+ target="_blank"
+>http://www.cpan.org/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>Snort</i>
+<br/>
+version: 2.0.4 or later
+<br/>
+<a
+ href="http://www.snort.org/"
+ target="_blank"
+>http://www.snort.org/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>Nagios</i>
+<br/>
+version: 1.2 or later
+<br/>
+<a
+ href="http://www.nagios.org/"
+ target="_blank"
+>http://www.nagios.org/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>NMAP</i>
+<br/>
+version: 3.50 or later
+<br/>
+<a
+ href="http://www.insecure.org/nmap/"
+ target="_blank"
+>http://www.insecure.org/nmap/</a>
+</p>
+</li>
+
+</ul>
+<p>
+
+We include a "preflight" check to test for those dependencies.
+
+An edge box used for network security infrastructure will probably
+have most installed already.
+
+The minimum versions are important; you may try using earlier versions
+<strong>AT YOUR OWN RISK</strong> but is strongly discouraged.
+
+In some cases those requirements are due to patch management, in other
+cases they are due to known interoperability issues.
+
+We will continue to work toward backward compatibility, as time and
+resources (and contributors) permit.
+
+</p>
+</section>
+
+<section
+ name="Apache/Jakarta Dependencies"
+>
+<p>
+
+These might take a bit more work for those who haven't worked with
+Java before, but there are plenty of good HOWTO docs online.
+
+</p>
+<p>
+
+The three components which are needed include:
+
+</p>
+<ul>
+
+<li>
+<p>
+<i>Java J2SE SDK</i>
+<br/>
+version: 1.4.2 or later
+<br/>
+<a
+ href="http://java.sun.com/j2se/"
+ target="_blank"
+>http://java.sun.com/j2se/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>Ant</i>
+<br/>
+version: 1.6.1 or later
+<br/>
+<a
+ href="http://ant.apache.org/"
+ target="_blank"
+>http://ant.apache.org/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>Tomcat</i>
+<br/>
+version: 5.x or later
+<br/>
+<a
+ href="http://jakarta.apache.org/tomcat/"
+ target="_blank"
+>http://jakarta.apache.org/tomcat/</a>
+</p>
+</li>
+
+</ul>
+<p>
+
+Minimum version requirements for these dependencies are critical.
+
+Your <i>OpenSIMS</i> will not operate with earlier versions of any of
+these three, unless you develop work-arounds locally.
+
+</p>
+<p>
+
+On some systems which include an older version of <i>Ant</i> (such as
+<i>Fedora</i>) you'll probably need to remove the previous version of
+<code>/etc/ant.conf</code> first to avoid installation errors.
+
+</p>
+</section>
+
+<section
+ name="Select A Database Vendor"
+>
+<p>
+
+The use of an SQL database server is required for running
+<i>OpenSIMS</i>.
+
+We use <i>Torque</i> to generate the SQL schema and Java wrappers for
+whichever particular database platform you select.
+
+</p>
+<p>
+
+On a new <i>OpenSIMS</i> installation, you must first generate some build
+properties:
+
+</p>
+<blockquote>
+<code>
+	ant -v init
+</code>
+</blockquote>
+<p>
+
+Edit the generated <code>build/build.properties</code> file so that it
+lists the correct settings for: database vendor, user, password, JDBC
+driver, and JAR file.
+
+Next, connect to the <code>tools/torque</code> directory.
+
+There are templates for each of the supported vendors under the
+<code>database</code> directory there.
+
+So far, we have tested with:
+
+</p>
+<ul>
+
+<li>
+<p>
+<i>PostgreSQL</i>
+<br/>
+version: 7.4.3 or later
+<br/>
+<a
+ href="http://www.postgresql.org/"
+ target="_blank"
+>http://www.postgresql.org/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>MySQL</i>
+<br/>
+version: 4.0.18 or later
+<br/>
+<a
+ href="http://www.mysql.com/"
+ target="_blank"
+>http://www.mysql.com/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>Oracle</i>
+<br/>
+version: 10g or later
+<br/>
+<a
+ href="http://www.oracle.com/"
+ target="_blank"
+>http://www.oracle.com/</a>
+</p>
+</li>
+
+</ul>
+<p>
+
+Because the database connections are based on JDBC, you need to
+configure your database server to provide a TCP listener.
+
+JDBC cannot connect through Unix sockets.
+
+</p>
+<p>
+
+If you are using one of the databases listed above, <strong>SKIP THE
+REST OF THIS SECTION</strong>.
+
+</p>
+<p>
+
+If you are using some different kind of database, edit your
+<code>build/build.properties</code> and
+<code>tools/torque/database/VENDOR</code> files to provide the correct
+means for making a database connection on your server.
+
+Then, while in the <code>tools/torque</code> directory, run:
+
+</p>
+<blockquote>
+<code>
+
+	ant -v preflight clean config build test datadump | tee install.txt
+
+</code>
+</blockquote>
+<p>
+
+That build will shoot a bunch o' logging to console ... enough for us
+to use in troubleshooting.
+
+You can ignore most of the warnings, but hopefully you will see a
+couple of host definitions being used to test Java access for
+<code>INSERT</code> and <code>SELECT</code>.
+
+</p>
+<p>
+
+To test the <i>Torque</i> results, take a look at the
+<code>opensims</code> database (or schema, depending on your vendor)
+to insure that the following tables have been created:
+
+</p>
+<code>
+<ul>
+<li>
+alert
+</li>
+<li>
+alert_def
+</li>
+<li>
+alert_type
+</li>
+<li>
+host
+</li>
+<li>
+id_table
+</li>
+</ul>
+</code>
+<p>
+
+If so, your SQL schema is in place, the Java source for its wrappers
+has been generated, and you should be fine for resuming the
+<i>OpenSIMS</i> installation.
+
+</p>
+<p>
+
+BTW, we're eager to hear about other databases which get used for
+<i>OpenSIMS</i> installations.
+
+</p>
+</section>
+
+<section
+ name="We've Tackled The Hard Problems"
+>
+<p>
+
+Given that the forgoing requirements are in place, the rest of the
+install <i>should</i> run fine.
+
+Granted, that may look like a lot of install work for you...
+
+But think about this: we are essentially describing (1) some popular
+open source OS on a box, (2) serving JSP pages, (3) providing some
+kind of database, and (4) running <i>Snort</i> ... 
+
+Those are reasonably standard fare on a web server.
+
+</p>
+<p>
+
+Packaged builds are underway for <i>RedHat</i>/<i>Fedora</i> (rpm),
+<i>Gentoo</i> (ebuild), <i>Debian</i> (deb), <i>FreeBSD</i> (port),
+<i>Mac OS X</i> (pkg), and a <i>Windows</i> installer.
+
+We're looking for people to participate in the <i>OpenSIMS</i> project
+specifically to shepherd each platform family.
+
+</p>
+<p>
+
+The tarball download for <i>OpenSIMS</i> already includes the following
+required, third-party, open source components:
+
+</p>
+<ul>
+
+<li>
+<p>
+<i>log4j</i>
+<br/>
+version: 1.2.8 or later
+<br/>
+<a
+ href="http://logging.apache.org/log4j/docs/"
+ target="_blank"
+>http://logging.apache.org/log4j/docs/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>JUnit</i>
+<br/>
+version: 3.8 or later
+<br/>
+<a
+ href="http://www.junit.org/"
+ target="_blank"
+>http://www.junit.org/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>JDOM</i>
+<br/>
+version: 0.10b or later
+<br/>
+<a
+ href="http://www.jdom.org/"
+ target="_blank"
+>http://www.jdom.org/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>JavaMail API</i>
+<br/>
+version: 1.3.1 or later
+<br/>
+<a
+ href="http://java.sun.com/products/javamail/"
+ target="_blank"
+>http://java.sun.com/products/javamail/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>JavaBeans Activation Framework</i>
+<br/>
+version: 1.0.2 or later
+<br/>
+<a
+ href="http://java.sun.com/products/javabeans/jaf/"
+ target="_blank"
+>http://java.sun.com/products/javabeans/jaf/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>Axis</i>
+<br/>
+version: 1.1 or later
+<br/>
+<a
+ href="http://ws.apache.org/axis/"
+ target="_blank"
+>http://ws.apache.org/axis/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>Torque</i>
+<br/>
+version: 3.1.x or later
+<br/>
+<a
+ href="http://db.apache.org/torque/"
+ target="_blank"
+>http://db.apache.org/torque/</a>
+</p>
+</li>
+
+<li>
+<p>
+<i>GeoIP</i>
+<br/>
+Jersion: ava API v1.1.4 or later and GPL country database
+<br/>
+<a
+ href="http://www.maxmind.com/app/java/"
+ target="_blank"
+>http://www.maxmind.com/app/java/</a>
+</p>
+</li>
+
+</ul>
+<p>
+
+If your system requires other versions for these dependencies, you may
+need to refer to the build scripts for the <i>Torque</i> database
+generator and the <i>OpenSIMS</i> webapp, changing their shared
+classpath settings accordingly.
+
+</p>
+<p>
+
+TROUBLESHOOT:
+
+About the <i>log4j</i> JAR file...
+
+On many platforms, the <i>log4j</i> JAR must be referenced from the
+webapp <code>lib</code> directory to avoid a security violation from
+the class loader, and the webapp build script will handle that
+automatically.
+
+So, if you use some other <i>log4j</i> JAR file, it should not live in
+the <i>Tomcat</i> <code>common/lib</code> directory, for that reason.
+
+</p>
+<p>
+
+TROUBLESHOOT:
+
+The installation of <i>JDOM</i> also includes JAR files for the
+<i>SAXPath</i>, <i>Jaxen</i>, and <i>Xerces-j</i> distributions.
+
+Even if you use a <i>JDOM</i> version other than what is included in
+the <i>OpenSIMS</i> download, leave all those other JAR files under
+the <i>JDOM</i> directory, just where the are.
+
+Or you must modify the webapp build script, accordingly.
+
+</p>
+</section>
+
+<section
+ name="Other Gotchas"
+>
+<p>
+
+There are certainly other gotchas that we haven't discovered.
+
+Let us know what you find: 
+
+<a
+ href="mailto:info@opensims.org"
+>info@opensims.org</a>
+
+</p>
+</section>
+
+</body>
+</document>

@@ -1,0 +1,851 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<properties>
+<title>Getting Started</title>
+<author
+ email="paco@symbiot.com"
+>Paco NATHAN</author>
+</properties>
+
+<body>
+
+<section
+ name="Supported Platforms"
+>
+<p>
+
+Installations for <i>OpenSIMS</i> and <i>AgentSDK</i> have been tested
+on the following 
+
+<a
+ href="http://opensims.org/platforms.html"
+>supported platforms</a>:
+
+</p>
+<blockquote>
+<table
+ border="0"
+ cellpadding="2"
+>
+
+<tr>
+<td>
+<i>Gentoo</i>
+</td>
+<td>
+status:
+	stable
+</td>
+</tr>
+
+<tr>
+<td>
+<i>Fedora</i>
+</td>
+<td>
+status:
+	stable
+</td>
+</tr>
+
+<tr>
+<td>
+<i>RedHat Enterprise</i>
+</td>
+<td>
+status:
+	stable
+</td>
+</tr>
+
+<tr>
+<td>
+<i>Debian "Testing"</i>
+</td>
+<td>
+status:
+	stable
+</td>
+</tr>
+
+<tr>
+<td>
+<i>FreeBSD</i>
+</td>
+<td>
+status:
+	in test
+</td>
+</tr>
+
+<tr>
+<td>
+<i>Mac OS X </i>
+</td>
+<td>
+status:
+	in test
+</td>
+</tr>
+
+<tr>
+<td>
+<i>Solaris</i>
+</td>
+<td>
+status:
+	<i>AgentSDK</i> only, so far
+</td>
+</tr>
+
+<tr>
+<td>
+<i>Win2k/WinXP</i>
+</td>
+<td>
+status:
+	<i>AgentSDK</i> only, so far
+</td>
+</tr>
+
+</table>
+</blockquote>
+<p>
+
+See the <code>docs</code> directory for platform-specific README
+files.
+
+</p>
+<p>
+
+The following steps are required to build <i>OpenSIMS</i> and
+<i>AgentSDK</i>, based on using <i>Tomcat 5.x</i> as the servlet
+container.
+
+</p>
+</section>
+
+<section
+ name="Step 1: Distribution Tarball"
+>
+<p>
+
+Download and extract the
+
+<a
+ href="http://opensims.org/download.html"
+>distribution tarball</a>
+
+to a particular directory.
+
+For example, place it under one of <code>/opt/</code>,
+<code>/usr/local/</code>, <code>/usr/share/</code> on Unix or Linux.
+
+This will become the "home directory" for your <i>OpenSIMS</i>
+instance.
+
+</p>
+</section>
+
+<section
+ name="Step 2: System Properties"
+>
+<p>
+
+Check that some non-<code>root</code> user has been created for
+running <i>Tomcat</i>, such as a <code>tomcat</code> user.
+
+For example:
+
+</p>
+<blockquote>
+<code>
+	/usr/sbin/groupadd tomcat
+<br/>
+	/usr/sbin/useradd -g tomcat tomcat
+</code>
+</blockquote>
+<p>
+
+Be sure that the environment variables are set correctly in the root
+shell which will run the installation scripts, for <code>PATH</code>,
+<code>JAVA_HOME</code>, <code>ANT_HOME</code>,
+<code>CATALINA_HOME</code>, and <code>CLASSPATH</code>.
+
+For example, you might need to append to <code>/etc/profile</code>
+with something that resembles:
+
+</p>
+<blockquote>
+<code>
+	export JAVA_HOME=/opt/j2sdk1.4.2_05
+<br/>
+	export ANT_HOME=/opt/apache-ant-1.6.1
+<br/>
+	export CATALINA_HOME=/opt/tomcat
+<br/>
+	export PATH=${ANT_HOME}/bin:${JAVA_HOME}/bin:${PATH}
+<br/>
+	export CLASSPATH=$JAVA_HOME/lib/tools.jar:$CLASSPATH
+</code>
+</blockquote>
+<p>
+
+Once those variables are set, on a new <i>OpenSIMS</i> installation
+you must then generate some build properties:
+
+</p>
+<blockquote>
+<code>
+	ant -v init
+</code>
+</blockquote>
+<p>
+
+Edit the file <code>build/build.properties</code> to suit your
+platform's file layout and paths to executables for each named
+dependency.
+
+For example, specify file locations if your installation of
+<i>Snort</i> or <i>Tomcat</i> has been customized.
+
+Whatever you add to <code>build.properties</code> will override the
+default settings in <code>default.properties</code>, as is generally
+the case when working with <i>Ant</i> build scripts.
+
+</p>
+<p>
+
+TROUBLESHOOT: 
+
+Do not change the truststore and keystore passphrases, leave them for
+now.
+
+</p>
+<p>
+
+Then select which database platform you prefer to use.
+
+For example, here is how a typical configuration looks for
+<i>PostgreSQL</i>:
+
+</p>
+<blockquote>
+<code>
+	db.platform = postgresql
+<br/>
+	db.jdbc.driver = org.postgresql.Driver
+<br/>
+	db.jdbc.jar = /opt/postgresql-7.4.3/lib/pg74.215.jdbc3.jar
+<br/>
+	db.user = opensims
+<br/>
+	db.password = foo
+<br/>
+	db.super_user = postgres
+<br/>
+	db.super_password = bar
+</code>
+</blockquote>
+<p>
+
+The default settings pre-configured in this download are, roughly
+speaking, what one would use for <i>RedHat</i> with <i>PostgreSQL</i>.
+
+</p>
+<p>
+
+TROUBLESHOOT:
+
+You may need to edit <code>hosts.allow</code> on a Linux or Unix
+server to let JDBC connect to your database TCP listener.
+
+</p>
+</section>
+
+<section
+ name="Step 3: Installer Script"
+>
+<p>
+
+We suggest that you run the "preflight" checks, using the
+<i>Ant</i> build script in the base directory.  That will test the
+versions found for each dependency, and will also attempt to connect
+to the database server:
+
+</p>
+<blockquote>
+<code>
+	ant
+</code>
+</blockquote>
+<p>
+
+If all goes well, next run the same script again (as the
+<code>root</code> user), this time invoking the <i>OpenSIMS</i>
+installer:
+
+</p>
+<blockquote>
+<code>
+	ant -v install | tee install.txt
+</code>
+</blockquote>
+<p>
+
+That will call several other installer scripts in sub-directories,
+following the directory structure described in the
+
+<a
+ href="./file_layout.html"
+>File Layout</a> chapter.
+
+</p>
+<p>
+
+TROUBLESHOOT:
+
+If you get prompted about whether or not you prefer to "handle SSL
+keys with high security", you <i>probably</i> want to answer "no".
+
+Otherwise, you must enter a private key passphrase each time your
+application server or agents restart.
+
+</p>
+<p>
+
+At the end of a successful installation, the build script prompts for
+whether you want to send an email back to 
+
+<a
+ href="http://www.opensims.org/"
+>OpenSIMS.org</a>
+
+requesting that your SSL certificate signing request (CSR) be signed
+by the OpenSIMS Project.
+
+If you agree, our repository server will email back a signed cert, so
+that your <i>OpenSIMS</i> installation may use secure web services
+(using <i>mutual authentication</i>) to obtain notifications about
+<i>OpenSIMS</i> source code upgrades and updated security data.
+
+</p>
+<p>
+
+TROUBLESHOOT:
+
+If you run into other troubles with the install, please send email to
+
+<a
+ href="mailto:info@opensims.org"
+>info@opensims.org</a>
+
+with a copy of your <code>install.txt</code> log file.
+
+We like to see those log files attached along with any installation
+bug reports; of course, edit the log to <strong>scrub out any
+details</strong> which you don't care to share.
+
+</p>
+<p>
+
+TROUBLESHOOT:
+
+If the <i>KeyManager</i> fails during the <i>openssl</i> calls to
+generate keys, it is probably because you have a version which does
+not support some of the command-line options being used.
+
+The simplest fix is to go into <code>tools/keymgr/build.xml</code>
+script and comment out the two <code>&lt;arg/&gt;</code> statements
+for <code>-set_serial</code> and its parameter.
+
+</p>
+<p>
+
+TROUBLESHOOT:
+
+The scripts which detect the network interface configuration are
+expecting to have something sane come out of your <i>ifconfig</i>
+utility -- in terms of network, broadcast, mask and IP address
+numbers.
+
+If, for instance, you have an ISP which sends really wacked-out
+numbers for DHCP (i.e., Time Warner) then the CIDRs generated by the
+<i>OpenSIMS</i> scripts may look a wee bit strange.
+
+Choose some network/interface during the install, then go back and
+edit the <code>webapp.xml</code> config file afterwards.
+
+</p>
+<p>
+
+We have begun to build regression testing for the various failure
+modes from wacky ISPs; email us a session from your <i>ifconfig</i> if
+you see troubles like that and we'll try to work that into our bug
+fixes and regression testing.
+
+</p>
+</section>
+
+<section
+ name="Step 4: Application Server"
+>
+<p>
+
+For the examples given here, we assume that you are working with
+<i>Tomcat 5.x</i> running standalone.
+
+The SSL port (default <code>8443/tcp</code>) needs to be the same as
+what is specified system properties in the <i>OpenSIMS</i>
+<code>build.properties</code> file.
+
+</p>
+<p>
+
+<i>OpenSIMS</i> expects to have an SSL listener provided by <i>Tomcat
+5.x</i> or a comparable web container.
+
+The most recently updated documentation for these connector options is
+available online at the 
+
+<a
+ href="http://jakarta.apache.org/tomcat/tomcat-5.0-doc/config/http.html"
+ target="_blank"
+>Jakarta Tomcat</a>
+
+site.
+
+</p>
+<p>
+
+Edit the <i>Tomcat</i> config file
+<code>$CATALINA_HOME/conf/server.xml</code>, doing a copy/paste of the
+SSL HTTP/1.1 connector definition listed below.
+
+This has its port set to <code>8443</code> -- or use whatever is
+redefined in your <code>build.properties</code> file by the
+<code>report.port</code> property.
+
+NB: we will use a similar connector definition later for the
+<code>agent.port</code> property, when <i>mutual authentication</i>
+gets enabled.
+
+</p>
+<code>
+<pre>
+
+    &lt;Connector
+     className="org.apache.coyote.tomcat5.CoyoteConnector"
+     debug="1"
+     scheme="https"
+     port="8443"
+     acceptCount="100"
+     maxThreads="150"
+     minSpareThreads="25"
+     maxSpareThreads="75"
+     enableLookups="false"
+     disableUploadTimeout="true"
+     tcpNoDelay="true"
+     connectionLinger="-1"
+     connectionTimeout="600000"
+     connectionUploadTimeout="600000"
+     keepAlive="true"
+     maxKeepAliveRequests="-1"
+     serverSocketTimeout="0"
+     secure="true"
+     sslProtocol="TLS"
+     algorithm="SunX509"
+     truststoreFile="/var/ssl/truststore.jks"
+     truststorePass="changeit"
+     truststoreType="JKS"
+     keystoreFile="/var/ssl/keystore.jks"
+     keystorePass="symbiot"
+     keystoreType="JKS"
+     clientAuth="false"
+     compression="off"
+    /&gt;
+
+</pre>
+</code>
+<p>
+
+In any case, be certain to enable "keep-alives" set to the maximum possible,
+enabling <i>persistent connections</i> which the agents use.
+
+For the <i>Tomcat 5.x</i> example <code>&lt;Connector&gt;</code> listed above, the 
+<code>connectionTimeout</code> attribute is set to <code>-1</code> for this effect.
+
+</p>
+<p>
+
+TROUBLESHOOT:
+
+If that <code>connectionTimeout</code> setting gets omitted, the
+agents may disconnect prematurely.
+
+</p>
+<p>
+
+Also add to the <i>Tomcat</i> config file
+<code>$CATALINA_HOME/conf/server.xml</code> with the following XML
+elements, as content inside of the existing <code>&lt;Host&gt;</code>
+element.
+
+You may need to change the paths, depending on your file layout:
+
+</p>
+<code>
+<pre>
+
+    &lt;Context
+     className="org.apache.catalina.core.StandardContext"
+     debug="1"
+     docBase="${CATALINA_HOME}/webapps/opensims" 
+     displayName="OpenSIMS"
+     path="/opensims"
+     charsetMapperClass="org.apache.catalina.util.CharsetMapper"
+     mapperClass="org.apache.catalina.core.StandardContextMapper"
+     wrapperClass="org.apache.catalina.core.StandardWrapper"
+     cachingAllowed="false"
+     cookies="true"
+     crossContext="false"
+     privileged="false"
+     reloadable="false"
+     swallowOutput="false"
+     useNaming="true"
+    &gt;
+      &lt;Environment
+       name="client.timeout"
+       description="Client Session Timeout Period in seconds"
+       override="true"
+       type="java.lang.Integer"
+       value="300"
+      /&gt;
+      &lt;Environment
+       name="debug.flash"
+       description="Flash Client Debug Flag (0/1)"
+       override="false"
+       type="java.lang.String"
+       value="0"
+      /&gt;
+   &lt;/Context&gt;
+
+</pre>
+</code>
+<p>
+
+TROUBLESHOOT:
+
+If the use of <i>log4j</i> in the webapp throws security exceptions --
+typically about <code>ClassLoader</code> permissions.
+
+Try disabling the <code>-security</code> option in the <i>Tomcat</i>
+startup script, if you see those kinds of exceptions in the
+<i>Tomcat</i> logs.
+
+</p>
+<p>
+
+TROUBLESHOOT:
+
+Optionally, you can run through a <i>Jk</i> connector via
+<i>Apache</i>, if you must run <i>Tomcat 4.x</i> instead of the
+recommended version.
+
+You'll need to grok <code>mod_jk</code> quite well.
+
+Please don't bug us when it croaks :)
+
+</p>
+</section>
+
+<section
+ name="Step 5: Snort Configuration"
+>
+<p>
+
+The agent that watches <i>Snort</i> expects to see alerts in a
+particular format.
+
+The config for <i>Snort</i> needs to include these command line
+options for running the daemon:
+
+</p>
+<blockquote>
+<table
+ border="0"
+ cellpadding="5"
+>
+
+<tr>
+<td>
+<code>-y</code>
+</td>
+<td>
+	show year in timestamp
+</td>
+</tr>
+
+<tr>
+<td>
+<code>-I</code>
+</td>
+<td>
+	show network interface
+</td>
+</tr>
+
+<tr>
+<td>
+<code>-A fast</code>
+</td>
+<td>
+	fast file format
+</td>
+</tr>
+
+</table>
+</blockquote>
+<p>
+
+If your <code>rules</code> directory is not inside the <i>Snort</i>
+<code>/etc/conf</code> directory as usual, be sure to edit the
+<code>build.properties</code> file to reflect your <i>Snort</i>
+settings.
+
+</p>
+<p>
+
+You probably will want to turn off some of the less-significant <i>Snort</i>
+rules which will cause much noise in the <i>OpenSIMS</i> analysis:
+
+</p>
+<blockquote>
+<code>
+
+	/etc/snort/bad-traffic.rules
+<br/>
+	#alert ip any any &lt;&gt; 127.0.0.0/8 any (msg:"BAD-TRAFFIC loopback traffic"; classtype:bad-unknown; reference:url,rr.sans.org/firewall/egress.php; sid:528; rev:4;)
+<br/>
+	#alert ip any any -&gt; any any (msg:"BAD-TRAFFIC same SRC/DST"; sameip; reference:cve,CVE-1999-0016; reference:url,www.cert.org/advisories/CA-1997-28.html; classtype:bad-unknown; sid:527; rev:4;)
+
+</code>
+</blockquote>
+<p>
+
+Note that the <code>alert_def.xml</code> file includes features for
+disabling and filtering rules from security devices, including
+<i>Snort</i>.
+
+Those features will be supported and documented more fully in an
+upcoming release.
+
+</p>
+</section>
+
+<section
+ name="Step 6: Custom Configurations"
+>
+<p>
+
+Edit the generated config file <code>/etc/opensims/webapp.xml</code>
+as needed.
+
+You probably won't need to do that much, except for peripheral
+features such as notification, or whenever your network configuration
+changes.
+
+</p>
+</section>
+
+<section
+ name="Step 7: Daemonic Invocation"
+>
+<p>
+
+Start these required services, in order, given that network and
+database services are already running -- and <i>Snort</i> plus any other
+security devices being correlated:
+
+</p>
+<ul>
+<li>
+	tomcat
+</li>
+<li>
+	symagent
+</li>
+</ul>
+<p>
+
+More of the overall installation process will become automated as we
+get feedback about <i>OpenSIMS</i> on specific platforms, and as we get
+packaged in the distros.
+
+</p>
+<p>
+
+TROUBLESHOOT:
+
+You need be sure to open ports <code>8443:8445</code> on your firewall
+for the <i>OpenSIMS</i> agents, clients, and webapp to use.
+
+</p>
+</section>
+
+<section
+ name="Step 8: Operation and Testing"
+>
+<p>
+
+Once you've got <i>Tomcat</i> running with the <i>OpenSIMS</i> webapp
+servlets and accepting input from the agents, then take a look at the
+diagnostics page:
+
+</p>
+<blockquote>
+<code>
+
+	https://YOUR_DOMAIN:8443/opensims/test
+
+</code>
+</blockquote>
+<p>
+
+That should show a text dump of the internal memory structures, which
+we use back in the QA lab at OpenSIMS.
+
+If you see "bogey" and "alert" entries, congrads!
+
+</p>
+<p>
+
+At this point you'll likely see similar info showing up animated in
+the <i>Flash</i> GUI, so try pointing your browser at:
+
+</p>
+<blockquote>
+<code>
+
+	https://YOUR_DOMAIN:8443/opensims/
+
+</code>
+</blockquote>
+<p>
+
+Then click on the <b>Live</b> button, and you should start to see the
+animation.
+
+To verify how a running <i>OpenSIMS</i> looks, check our 
+
+<a
+ href="http://opensims.org/screens.html" 
+>screenshots</a>
+
+tour and
+
+<a
+ href="http://opensims.org/scary.html"
+>animation</a>
+
+movie.
+
+</p>
+<p>
+
+Note that in the current correlation state machine, alerts will be
+displayed if they involve a host which is known by autodiscovery to be
+on your network; others will be ignored as false positives.
+
+</p>
+<p>
+
+TROUBLESHOOT:
+
+If the browser shows <code>Server Socket Error</code> when you click
+on the <b>Live</b> button, then the Flash XMLSocket listener (default
+port: <code>8445/tcp</code>) is probably not running.
+
+</p>
+<p>
+
+Sometimes, if you try to stop/start <i>Tomcat</i> too rapidly, the
+previous listener socket will not have enough time to shutdown before
+the new instance gets attempted.
+
+The required wait interval depends on the operating system, but it can
+be up to a couple of minutes.
+
+If that is the case, you'll probably see the following errors in the
+<i>Tomcat</i> logs:
+
+</p>
+<blockquote>
+<code>
+
+	java.net.BindException: Address already in use
+
+</code>
+</blockquote>
+<p>
+
+The best approach is to stop the symagent service, stop the
+<code>tomcat</code> service, run <code>kill -9</code> on any orphaned
+processes for either, then wait a couple of minutes before starting
+those two services again.
+
+On a Linux/Unix system, you can use <code>netstat -an | grep
+LISTEN</code> to monitor the state of listener sockets.
+
+</p>
+<p>
+
+TROUBLESHOOT:
+
+Alerts disapper after a while.
+
+Current settings will delete information about attacks and attackers
+from the database after 72 hours.
+
+To modify how your attack data persists, edit the
+<code>webapp.xml</code> config file, and change the
+<code>data.age_limit</code> parameter, which is listed in
+milliseconds.
+
+We've tested this successfully with high data rates, but depending on
+the file system, database, and processors ... your mileage may vary.
+
+</p>
+</section>
+
+<section
+ name="Debugging Techniques"
+>
+<p>
+
+One good practice for debugging an <i>OpenSIMS</i> in operation is to tail
+the logs together:
+
+</p>
+<blockquote>
+<code>
+
+	cd /var/log
+<br/>
+	tail -f opensims/* tomcat/* snort/alert
+
+</code>
+</blockquote>
+<p>
+
+... or something along those lines.
+
+We like to see those kinds of log files attached alongside any runtime
+bug reports, too.
+
+</p>
+</section>
+
+</body>
+</document>

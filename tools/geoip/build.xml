@@ -1,0 +1,130 @@
+<project
+ name="geoip"
+ default="jar"
+ basedir="."
+>
+
+<!--
+@LICENSE@
+
+Paco NATHAN paco@symbiot.com
+Linas VARDYS linas@symbiot.com
+ -->
+
+<description>
+$CVSId: build.xml,v 1.5 2004/08/22 04:31:47 paco Exp $
+$Id: build.xml 1 2008-01-10 18:37:05Z smoot $
+
+OpenSIMS - tool to package GeoIP open source Java code into a JAR file
+for compiling the OpenSIMS source.
+
+A typical target sequence would be:
+
+	ant jar
+
+</description>
+
+
+<!-- ######################################################################
+		global properties
+     ###################################################################### -->
+
+<property
+ name="build.dir"
+ location="../../build"
+/>
+<import
+ file="${build.dir}/properties.xml"
+/>
+
+<property
+ name="geoip.home"
+ value="../../java/lib/GeoIPJava-1.1.4"
+/>
+<property
+ name="geoip.jar"
+ value="${geoip.home}/geoip.jar"
+/>
+
+
+<!-- ######################################################################
+		build tasks
+     ###################################################################### -->
+
+<target
+ name="clean"
+ description="clean out previously compiled class files"
+>
+<delete
+ includeEmptyDirs="true"
+>
+<fileset
+ dir="${geoip.home}/source"
+ includes="**/*~"
+ defaultExcludes="no"
+/>
+<fileset
+ dir="${geoip.home}/source"
+ includes="**/*.class"
+/>
+</delete>
+</target>
+
+
+<target
+ name="compile"
+ description="compile the source downloaded from MaxMind.com"
+ depends="clean"
+>
+<javac
+ deprecation="yes"
+ verbose="yes"
+ debug="on"
+ destdir="${geoip.home}/source"
+ srcdir="${geoip.home}/source"
+ includes="**/*.java"
+/>
+</target>
+
+
+<target
+ name="javadoc"
+ description="generate JavaDocs for the GeoIP source, including the proper copyright notices"
+ depends="compile"
+>
+<javadoc
+ destdir="${geoip.home}/javadoc"
+ author="true"
+ use="true"
+ version="true"
+ windowtitle="MaxMind GeoIP Java API"
+>
+<packageset
+ dir="${geoip.home}/source"
+ defaultexcludes="yes"
+>
+<include
+ name="com/maxmind/**"
+/>
+</packageset>
+
+<doctitle><![CDATA[<h1>MaxMind GeoIP Java API</h1>]]></doctitle>
+<bottom><![CDATA[<i>Copyright (C) 2003 <a href="http://www.maxmind.com/app/java/">MaxMind LLC</a>. All Rights Reserved. Licensed under the <a href="http://www.opensource.org/licenses/gpl-license.php" target="_blank">GNU GPL, Version 2.0</a>.</i>]]></bottom>
+</javadoc>
+</target>
+
+
+<target
+ name="jar"
+ description="package the compiled code into a JAR file"
+ depends="compile,javadoc"
+>
+<jar
+ destfile="${geoip.home}/geoip.jar"
+ basedir="${geoip.home}/source"
+ includes="com/**/*.class"
+/>
+</target>
+
+
+</project>

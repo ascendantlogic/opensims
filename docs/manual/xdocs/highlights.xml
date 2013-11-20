@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<properties>
+<title>Highlights, Caveats, To-Do's</title>
+<author
+ email="paco@symbiot.com"
+>Paco NATHAN</author>
+</properties>
+
+<body>
+
+<section
+ name="KeyManager"
+>
+<p>
+
+This set of scripts binds the magic Mike invoked to leverage
+complementary and competing features from both <i>openssl</i> and
+<i>keytool</i> to support <i>mutual authentication</i>.
+
+The resulting keys and SSL certs interoperate between the respective
+worlds of web servers such as <i>Apache</i> (pem) and J2EE application
+servers such as <i>Tomcat</i> (jks).
+
+In other words, it makes C/C++ and Java play nice together for crypto
+applications ... not readily found elsewhere.
+
+</p>
+<p>
+
+The chain of authority is crafted such that an <i>OpenSIMS</i> server
+acts as a CA for its agents.
+
+At the same time, individual instances of <i>OpenSIMS</i> operate
+within a collaborative framework using a remote repository (see
+
+<a
+ href="http://opensims.org/rm_proposal.pdf"
+ target="_blank"
+>Apache Incubator Proposal</a>)
+
+as their certificate authority (CA).
+
+From there, we integrate remote resources using secure web services
+which rely on <i>mutual authentication</i>.
+
+</p>
+</section>
+
+<section
+ name="AgentSDK"
+>
+<p>
+
+Camper created a secure, robust, extensible plugin architecture.
+
+Each agent knows just enough to phone home to the <i>OpenSIMS</i>
+servlet.
+
+From there, the UML/XML-driven state machines used by the webapp's
+<i>correlation engine</i> sequence the configuration for agent
+plugins.
+
+See also the 
+
+<a
+ href="http://opensims.org/docs/pdf/agent_security.pdf"
+ target="_blank"
+>security analysis</a>
+
+for notes about how the agents and key management have been engineered
+to minimie <i>windows of vulnerability</i>.
+
+</p>
+<ul>
+
+<li>
+<i>Windows</i> support is (for now) based on (a wee bit o') <i>Cygwin</i>.
+</li>
+<li>
+needs WEM-to-syslog gateway.
+</li>
+<li>
+no countermeasures in this release (not yet).
+</li>
+
+</ul>
+</section>
+
+<section
+ name="Autodiscovery"
+>
+<p>
+
+This server-side process flow sequences the agent plugins, and so
+produces and maintains a network model represented as an XML document.
+
+That model gets periodically updated, and includes analysis based on
+ARP, NMAP, AMAP, PCAP, and SNMP.
+
+It provides the basis for both correlation and reporting.
+
+</p>
+<ul>
+
+<li>
+still migrating support for IP-less environments.
+</li>
+<li>
+availability monitoring is not implemented in this release.
+</li>
+<li>
+still migrating SNMP walk from the commercial version.
+</li>
+<li>
+still migrating network traffic modeling (drives NBAD).
+</li>
+
+</ul>
+</section>
+
+<section
+ name="Security Alert Definitions"
+>
+<p>
+
+This is a general framework for representing alert definitions in XML,
+based on a wide variety of security devices and vendors.
+
+Includes support for URL references, flexible means for type
+categorization, plus <i>XPath</i> and <i>XQuery</i> filtering based on
+platform/service version analysis.
+
+That in turn leverages autodiscovery to reduce false positives.
+
+</p>
+<p>
+
+Support is provided for the two reference implementation componenents:
+<i>Snort</i> and <i>SpamAssassin</i>.
+
+For example, you can edit or update your <i>Snort</i> rules, and the
+<i>Ant</i> scripts use a "layered" set of XML transforms to preserve
+edits and annotations in your alert definitions document.
+
+</p>
+</section>
+
+<section
+ name="Flash GUI / Live Animation"
+>
+<p>
+
+Lindsey has created one of the few (if not the only) existing, open
+source, real-time, security visualization GUIs based on Macromedia
+<i>Flash</i>.
+
+</p>
+</section>
+
+<section
+ name="Flash XMLSocket Listener"
+>
+<p>
+
+Our <i>Flash</i> client support in Java is a rare bird, since there
+are not many other examples readily available for integrating
+<i>Tomcat</i> and <i>Flash XMLSocket</i>.
+
+This provides a lightweight protocol for managing multiple, extensible
+streams that combine both push and pull updates -- using the network
+model and alert data streams from correlation engine as its primary data
+source, integrated along with remote RSS feeds.
+
+</p>
+<ul>
+
+<li>
+still extending our data sources, to define streams in <i>XQuery</i>.
+</li>
+<li>
+no support for multiple users or auth in this release.
+</li>
+
+</ul>
+</section>
+
+<section
+ name="Remediation and Notification"
+>
+<p>
+
+Extensible support for several modes of notification: XMPP
+(<i>Jabber</i>), SMTP (email), text to telnet socket, HTTP/HTTPS
+"post", and others.
+
+</p>
+<ul>
+
+<li>
+for low-rent proof-of-concept, try <i>SOCAT</i> with the 
+
+<a
+ href="http://opensims.org/docs/javadoc/org/opensims/notify/TelnetNotify.html"
+ target="_blank"
+>TelnetNotify</a>
+
+class.
+</li>
+<li>
+still migrating over <i>syslog</i> support.
+</li>
+<li>
+RSS support based on <i>Informa</i> is being developed.
+</li>
+
+</ul>
+</section>
+
+<section
+ name="Geolocation (GIS)"
+>
+<p>
+
+The servlet provides "pluggable" support for adapting to a variety of
+geolocation data sources and 
+
+<a
+ href="http://www.opengis.org/"
+ target="_blank"
+>GIS standards</a>.
+
+The popular <i>GeoIP</i> database and Java API from MaxMind is used
+for our reference implementation.
+
+</p>
+</section>
+
+<section
+ name="Persistence Layer"
+>
+<p>
+
+<i>OpenSIMS</i> is "vendor-agnostic" about database platform
+selection, since its <i>object-relational mapping</i> (ORM) support
+allows it to switch between RDBMS vendors, embedded SQL, or
+memory-only.
+
+We have integrated the use of the
+
+<a
+ href="http://db.apache.org/torque/"
+ target="_blank"
+>Torque</a>
+
+open source OM package to provide cross-platform SQL schema
+generation, and to generate Java and XML interfaces to the SQL
+database.
+
+</p>
+<ul>
+
+<li>
+<i>Torque</i> support for <i>PostgreSQL</i>, <i>MySQL</i>, or <i>Oracle</i> (so far).
+</li>
+<li>
+<i>Cloudscape/Derby</i>, <i>MSSQL</i>, <i>Sybase</i>, and some embedded DBs come next.
+</li>
+
+</ul>
+<p>
+
+Note that <i>OpenSIMS</i> also makes ample use of 
+
+<a
+ href="http://www.jdom.org/"
+ target="_blank"
+>JDOM</a>
+
+throughout the Java code for XML management of DOM, XPath, XSL, etc.
+
+Many thanks to Jason Hunter, Brent MacLaughlin, et al., for their fine
+work.
+
+We may also integrate some aspects of the <i>XMLBeans</i> project at
+Apache.
+
+</p>
+</section>
+
+<section
+ name="UML Activity Diagram Modeling"
+>
+<p>
+
+For a moment, forget what you know about CASE tools (<i>Eclipse</i>,
+<i>Poseidon</i>, whatever your favorite IDE may be this week, etc.)
+and forget about using UML to generate code, diagrams, or XMI.
+
+Just chill, okay?
+
+</p>
+<p>
+
+Now imagine having an open source implementation for a lightweight XML
+representation of UML Activity Diagrams which specify finite state
+machines in Java/XML, while perhaps taking a few cues from Roy Fielding's 
+
+<a
+ href="http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm"
+ target="_blank"
+>REST</a>
+
+architectural design philosophy.
+
+</p>
+<ul>
+
+<li>
+needs to render the UML diagrams.
+</li>
+<li>
+does not yet handle <i>fork</i> or <i>join</i>.
+</li>
+<li>
+subscriber UML has been defined but not implemented.
+</li>
+
+</ul>
+</section>
+
+<section
+ name="Reporting"
+>
+<p>
+
+The webapp servlet generates XML from the combined data sources
+(in-memory, database, other XML files), which gets transformed as HTML
+(PDF?, <i>Excel</i>?) to render specific reports.
+
+
+There is enough included in this release to give a flavor for what is
+intended, but the reporting can go <i>much</i>, much further.
+
+Might also be good to refactor as something based on <i>Velocity</i>,
+in terms of performance.
+
+</p>
+<ul>
+
+<li>
+needs detail and navigation added to reports, to echo website/manual.
+</li>
+
+</ul>
+</section>
+
+<section
+ name="Autoconfig"
+>
+<p>
+
+Portions have been included in recent releases, such as the
+network interface discovery/selection and SSL key manager, as well as
+what is included within the <i>AgentSDK</i> build.
+
+Lindsey has developed a dependencies checking tool in
+<code>tools/depend</code> which runs "preflight" tests, and then
+reports about what you may need to install or upgrade.
+
+</p>
+<ul>
+
+<li>
+adding more cross-platform version detection.
+</li>
+<li>
+auto-download for dependencies.
+</li>
+<li>
+generate <code>build.properties</code> using a <code>./configure</code> script.
+</li>
+
+</ul>
+<p>
+
+Note that the <code>build/*.properties</code> files are intended to be
+used only during initial install and then again during compiles and
+builds.
+
+In turn, each of those tasks will generate and install their own XML
+files which provide the runtime configuration that you as the system
+administrator need, to use, edit, and maintain <i>OpenSIMS</i>.
+
+See the chapter on
+
+<a
+ href="./file_layout.html"
+>File Layout</a>. 
+
+for more details.
+
+</p>
+</section>
+
+</body>
+</document>

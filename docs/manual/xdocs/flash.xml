@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<properties>
+<title>HOWTO: Flash GUI</title>
+<author
+ email="lsimon@symbiot.com"
+>Lindsey SIMON</author>
+</properties>
+
+<body>
+
+<section
+ name="Using Flash"
+>
+<p>
+
+Using the <i>Flash Player</i> version 7.0 r18+ should work for viewing
+the GUI.
+
+That player is available for *BSD, Linux, Mac, and Windows.
+
+</p>
+</section>
+
+<section
+ name="Modifying the GUI"
+>
+<p>
+
+For compilation, Macromedia <i>Flash MX 2004</i> version 7+ is
+required.
+
+The easiest way is to open the project file,
+<code>flash/openSIMS.flp</code> and then publish the
+<code>*.swf</code> files from there.
+
+</p>
+<p>
+
+The <code>*.fla</code> files all contain an instance of a shared movieclip in
+<code>component_lib.swf</code> so that they all share the same library of
+components and fonts.
+
+Each of the <code>*.fla</code> files includes its necessary
+<code>*.as</code> files, which is where the source code for the GUI
+actually lives.
+
+</p>
+<p>
+
+The <code>*.xml</code> files set parameters, menu items, etc., so
+check there to customize the display.
+
+</p>
+</section>
+
+<section
+ name="RSS Feeds"
+>
+<p>
+
+To display an RSS feed accessed from a remote site, the site must
+publish a <code>crossdomain.xml</code> policy file at the root level
+of their web site:
+
+</p>
+<blockquote>
+<code>
+
+	&lt;?xml version="1.0"?&gt;
+<br/>
+	&lt;!-- http://www.foo.com/crossdomain.xml --&gt;
+<br/>
+	&lt;cross-domain-policy&gt;
+<br/>
+	  &lt;allow-access-from domain="*" /&gt;
+<br/>
+	&lt;/cross-domain-policy&gt;
+
+</code>
+</blockquote>
+<p>
+
+Also see our examples at:
+
+</p>
+<ul>
+
+<li>
+<a
+ href="http://opensims.org/crossdomain.xml"
+ target="_blank"
+>http://opensims.org/crossdomain.xml</a>
+</li>
+<li>
+<a
+ href="http://opensims.org/feed.xml"
+ target="_blank"
+>http://opensims.org/feed.xml</a>
+</li>
+
+</ul>
+<p>
+
+Otherwise, the security sandbox for <i>Flash</i> will block access.
+
+</p>
+</section>
+
+</body>
+</document>
